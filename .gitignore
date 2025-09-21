@@ -1,0 +1,21 @@
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.vcxproj.user
+Debug/
+Release/
+
+# Build output
+x64/
+*.exe
+*.obj
+*.pdb
+*.ilk
+
+# Library binaries
+Libraries/
+
+# Binaries
+*.dll
+*.lib
