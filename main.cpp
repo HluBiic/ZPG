@@ -17,33 +17,42 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-float rotDir = 50.f; // TASK 2
+//array of vertices for a triangle...changed to rectangle
+float points[] = {
+    0.5f, 0.5f, 0.0f,
+    0.5f, -0.5f, 0.0f,
+   -0.5f, 0.5f, 0.0f, 
+   -0.5f, -0.5f, 0.0f
+};
 
-// Prints GLFW errors to stderr
+const char* vertex_shader =
+"#version 330\n"
+"layout(location=0) in vec3 vp;"
+"void main () {"
+"     gl_Position = vec4 (vp, 1.0);"
+"}";
+
+const char* fragment_shader =
+"#version 330\n"
+"out vec4 fragColor;"
+"void main () {"
+"     fragColor = vec4 (0.0, 0.5, 0.5, 1.0);"
+"}";
+
+
 static void error_callback(int error, const char* description) { fputs(description, stderr); }
-// Closes app when ESC pressed + prints info about key pressed
-// TASK 2: after pressing R the direcion is changed
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GL_TRUE);
     printf("key_callback [%d,%d,%d,%d] \n", key, scancode, action, mods);
-
-    if (key == GLFW_KEY_R && action == GLFW_PRESS) {
-        rotDir = rotDir * -1;
-    }
 }
-// Prints info when window gains/looses focus
 static void window_focus_callback(GLFWwindow* window, int focused) { printf("window_focus_callback \n"); }
-// Prints info when window minimized/maximized
 static void window_iconify_callback(GLFWwindow* window, int iconified) { printf("window_iconify_callback \n"); }
-// Prints info when window resizewd + its new size
 static void window_size_callback(GLFWwindow* window, int width, int height) {
     printf("resize %d, %d \n", width, height);
     glViewport(0, 0, width, height);
 }
-// Prints info when window registers mouse movements
 static void cursor_callback(GLFWwindow* window, double x, double y) { printf("cursor_callback \n"); }
-// Prints info when window registers mouse click + which button was clicked
 static void button_callback(GLFWwindow* window, int button, int action, int mode) {
     if (action == GLFW_PRESS) printf("button_callback [%d,%d,%d]\n", button, action, mode);
 }
@@ -65,20 +74,87 @@ glm::mat4 Model = glm::mat4(1.0f)
 */
 
 
-
 int main(void) {
     GLFWwindow* window;
     glfwSetErrorCallback(error_callback);
-
-    if (!glfwInit()) // Initialize GLFW lib 
+    if (!glfwInit()) {
+        fprintf(stderr, "ERROR: could not start GLFW3\n");
         exit(EXIT_FAILURE);
-    window = glfwCreateWindow(640, 480, "ZPG", NULL, NULL);
+    }
+
+    /* //inicializace konkretni verze
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE,
+    GLFW_OPENGL_CORE_PROFILE);  //*/
+
+    window = glfwCreateWindow(800, 600, "ZPG", NULL, NULL);
     if (!window) {
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
+
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(1); // Enables V-sync
+    glfwSwapInterval(1); // v-sync enable
+
+    // start GLEW extension handler
+    glewExperimental = GL_TRUE;
+    glewInit();
+
+    // get version info
+    printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
+    printf("Using GLEW %s\n", glewGetString(GLEW_VERSION));
+    printf("Vendor %s\n", glGetString(GL_VENDOR));
+    printf("Renderer %s\n", glGetString(GL_RENDERER));
+    printf("GLSL %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+    int major, minor, revision;
+    glfwGetVersion(&major, &minor, &revision);
+    printf("Using GLFW %i.%i.%i\n", major, minor, revision);
+
+
+    //vertex buffer object (VBO)
+    GLuint VBO = 0;
+    glGenBuffers(1, &VBO); // generate the VBO
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+
+    //Vertex Array Object (VAO)
+    GLuint VAO = 0;
+    glGenVertexArrays(1, &VAO); //generate the VAO
+    glBindVertexArray(VAO); //bind the VAO
+    glEnableVertexAttribArray(0); //enable vertex attributes
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+
+    //create and compile shaders
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertex_shader, NULL);
+    glCompileShader(vertexShader);
+    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragment_shader, NULL);
+    glCompileShader(fragmentShader);
+    GLuint shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, fragmentShader);
+    glAttachShader(shaderProgram, vertexShader);
+    glLinkProgram(shaderProgram);
+
+
+    //control of compilation and program shader linking
+    GLint status;
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &status);
+    if (status == GL_FALSE) {
+        GLint infoLogLength;
+        glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &infoLogLength);
+        GLchar* strInfoLog = new GLchar[infoLogLength + 1];
+        glGetProgramInfoLog(shaderProgram, infoLogLength, NULL, strInfoLog);
+        fprintf(stderr, "Linker failure: %s\n", strInfoLog);
+        delete[] strInfoLog;
+    } else {
+        printf("Compilation + linkiing successfull\n");
+    }
+
 
     // Registers all the callbacks
     glfwSetKeyCallback(window, key_callback);
@@ -88,84 +164,28 @@ int main(void) {
     glfwSetWindowIconifyCallback(window, window_iconify_callback);
     glfwSetWindowSizeCallback(window, window_size_callback);
 
+
     // Initial setup of size, buffer size, viewport
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
     float ratio = width / (float)height;
     glViewport(0, 0, width, height);
 
-    // [0,0] in the center; [1,1] top right corner; [-1,-1] bottom left corner
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-
-
 
     while (!glfwWindowShouldClose(window)) {
-        glClear(GL_COLOR_BUFFER_BIT); // Clears the screen
-
-        glMatrixMode(GL_MODELVIEW); 
-        glLoadIdentity();
-        //glRotatef((float)glfwGetTime() * 50.f, 0.f, 0.f, 1.f);//angle, x, y, z axis rotation as direction vector
-        
-        // TASK 3: rotation along all 3 of the axes but with different speeds
-        //glRotatef((float)glfwGetTime() * 50.f, 3.f, 1.0f, 0.5f);//angle, x, y, z axis rotation
-        
-        // TASK 4: rotation along one of the vertices
-        // TASK 2: rotation changes after pressing the R kkey
-        glTranslatef(-0.4f, 0.4f, 0.f); // move [0,0] to the edge of the red vertex
-        glRotatef((float)glfwGetTime() * rotDir, 0.f, 0.f, 1.f);
-        glTranslatef(0.4f, -0.4f, 0.0f); // move [0,0] back to center
-
-        // TASK 1: 1st way via TRIANGLES (2 triangles)
-        /*glBegin(GL_TRIANGLES);
-        // 1st triangle of the Rectangle
-        glColor3f(1.f, 0.f, 0.f); //set color
-        glVertex3f(-0.6f, -0.4f, 0.f); // set vertex
-        glColor3f(1.f, 1.f, 0.f);
-        glVertex3f(0.6f, -0.4f, 0.f);
-        glColor3f(0.f, 1.f, 0.f);
-        glVertex3f(-0.6f, 0.4f, 0.f);
-
-        // 2nd triangle of the Rectangle
-        glColor3f(0.f, 0.f, 1.f);
-        glVertex3f(0.6f, 0.4f, 0.f);
-        glColor3f(0.f, 1.f, 0.f);
-        glVertex3f(-0.6f, 0.4f, 0.f);
-        glColor3f(1.f, 1.f, 0.f);
-        glVertex3f(0.6f, -0.4f, 0.f);*/
-
-        // TASK 1: 2nd way via POLYGON and not 2 triangles
-        glBegin(GL_POLYGON);
-        glColor3f(1.f, 0.f, 0.f); //red
-        glVertex3f(-0.4f, 0.4f, 0.f);
-        glColor3f(0.f, 1.f, 0.f); //green
-        glVertex3f(-0.4f, -0.4f, 0.f);
-        glColor3f(0.f, 0.f, 1.f); //blue
-        glVertex3f(0.4f, -0.4f, 0.f);
-        glColor3f(1.f, 1.f, 0.f); //yellow
-        glVertex3f(0.4f, 0.4f, 0.f);
-
-
-        glEnd();
-        glfwSwapBuffers(window); // swap buffer...double buffering for rendering
-
+        // clear color and depth buffer
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glUseProgram(shaderProgram);
+        glBindVertexArray(VAO);
+        // draw triangles
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); //mode,first,count
+        // update other events like input handling
         glfwPollEvents(); // For procesing any pending input events (nmouse, keyboard, window)
+        // put the stuff we’ve been drawing onto the display
+        glfwSwapBuffers(window); // swap buffer...double buffering for rendering
     }
     glfwDestroyWindow(window); // Destroy wind. before exiting program
+
     glfwTerminate();
     exit(EXIT_SUCCESS);
 }
-
-
-
-/*
-TASKS from exercise 01:
-1. DONE - Vytvořte z aktuálního trojúhelníku čtverec, jehož čtvrtý vrchol bude žlutý.
-2. DONE - Upravte aplikaci tak, aby se při stisku klávesy změnil plynulý směr rotace.
-3. DONE - Změňte si osu rotace.
-4. DONE - Zkuste rotovat kolem obecného bodu (např. kolem jednoho z rohů čtverce).
-5. DONE - Zprovozněte si knihovny GLM a GLEW, budeme je potřebovat příští týden.
-6. DONE - Používejte verzovací systém, můžete použít gitlab.vsb.cz.
-7. DONE - Zopakujte si debugování (procházení, krokování, vypisování proměnných atd.) zdrojového kódu.
-*/
