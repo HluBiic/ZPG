@@ -16,6 +16,8 @@
 //Include the standard C++ headers
 #include <stdlib.h>
 #include <stdio.h>
+#include "ShaderProgram.h"
+#include "Model.h"
 
 //array of vertices for a triangle...changed to rectangle
 float points[] = {
@@ -117,7 +119,9 @@ int main(void) {
     GLuint VBO = 0;
     glGenBuffers(1, &VBO); // generate the VBO
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+    Model* m = new Model(2);
+    glBufferData(GL_ARRAY_BUFFER, m->getModel().size() * sizeof(float), m->getModel().data(), GL_STATIC_DRAW);
+    //glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
 
     //Vertex Array Object (VAO)
     GLuint VAO = 0;
@@ -127,33 +131,7 @@ int main(void) {
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-
-    //create and compile shaders
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertex_shader, NULL);
-    glCompileShader(vertexShader);
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragment_shader, NULL);
-    glCompileShader(fragmentShader);
-    GLuint shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, fragmentShader);
-    glAttachShader(shaderProgram, vertexShader);
-    glLinkProgram(shaderProgram);
-
-
-    //control of compilation and program shader linking
-    GLint status;
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &status);
-    if (status == GL_FALSE) {
-        GLint infoLogLength;
-        glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &infoLogLength);
-        GLchar* strInfoLog = new GLchar[infoLogLength + 1];
-        glGetProgramInfoLog(shaderProgram, infoLogLength, NULL, strInfoLog);
-        fprintf(stderr, "Linker failure: %s\n", strInfoLog);
-        delete[] strInfoLog;
-    } else {
-        printf("Compilation + linkiing successfull\n");
-    }
+    ShaderProgram* sp = new ShaderProgram(vertex_shader, fragment_shader);
 
 
     // Registers all the callbacks
@@ -175,7 +153,8 @@ int main(void) {
     while (!glfwWindowShouldClose(window)) {
         // clear color and depth buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glUseProgram(shaderProgram);
+        //glUseProgram(shaderProgram);
+        glUseProgram(sp->getId());
         glBindVertexArray(VAO);
         // draw triangles
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); //mode,first,count
