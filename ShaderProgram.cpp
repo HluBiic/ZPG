@@ -1,7 +1,3 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <GL/glew.h>
-
 #include "ShaderProgram.h"
 
 ShaderProgram::ShaderProgram(const char* vertex_shader, const char* fragment_shader) {
@@ -34,12 +30,10 @@ ShaderProgram::ShaderProgram(const char* vertex_shader, const char* fragment_sha
     }
 }
 
-bool ShaderProgram::setShaderProgram()
-{
+/*bool ShaderProgram::setShaderProgram() {
 	return false;
-}
+}*/
 
-GLuint ShaderProgram::getId()
-{
-    return this->id;
+void ShaderProgram::useShaderProgram() {
+    glUseProgram(this->id);
 }
