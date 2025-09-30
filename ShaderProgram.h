@@ -3,6 +3,17 @@
 #include <GLFW/glfw3.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string>
+
+
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+
+using namespace std;
 
 /**
 * @class ShaderProgram
@@ -32,4 +43,8 @@ class ShaderProgram {
 		* with this shader program's ID so it never leaves the class.
 		*/
 		void useShaderProgram();
+
+
+		void setUniform(const char* name, const glm::mat4& matrix);
+		void setUniform(const glm::mat4& matrix);
 };

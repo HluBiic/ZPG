@@ -1,4 +1,5 @@
 #include "ShaderProgram.h"
+#include <iostream>
 
 ShaderProgram::ShaderProgram(const char* vertex_shader, const char* fragment_shader) {
     //create and compile shaders
@@ -24,6 +25,7 @@ ShaderProgram::ShaderProgram(const char* vertex_shader, const char* fragment_sha
         glGetProgramInfoLog(this->id, infoLogLength, NULL, strInfoLog);
         fprintf(stderr, "Linker failure: %s\n", strInfoLog);
         delete[] strInfoLog;
+        exit(1);
     }
     else {
         printf("Compilation + linkiing successfull\n");
@@ -37,3 +39,18 @@ ShaderProgram::ShaderProgram(const char* vertex_shader, const char* fragment_sha
 void ShaderProgram::useShaderProgram() {
     glUseProgram(this->id);
 }
+
+
+void ShaderProgram::setUniform(const char* name, const glm::mat4& matrix) {
+    GLint loc = glGetUniformLocation(this->id, name);
+    if (loc == -1) {
+        cout << "model matrix not found" << endl;
+        exit(1);
+    }
+    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(matrix));
+}
+
+void ShaderProgram::setUniform(const glm::mat4& matrix) {
+    setUniform("modelMatrix", matrix);
+}
+

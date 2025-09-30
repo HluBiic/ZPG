@@ -2,6 +2,8 @@
 
 #include "ShaderProgram.h"
 #include "Model.h"
+#include "DrawableObject.h"
+#include "Scene.h"
 
 using namespace std;
 
@@ -19,6 +21,8 @@ class App {
 		GLFWwindow* window; // pointer to the GLFW window
 		vector<ShaderProgram> shaderPrograms; // container for shader programs
 		vector<Model> models; // container for models
+		vector<DrawableObject> objects;
+		Scene* s;
 	public:
 		/**
 		* @brief Initializes the window ptr.

@@ -5,6 +5,18 @@
 #include "App.h"
 #include "ShaderProgram.h"
 #include "Model.h"
+#include "DrawableObject.h"
+
+/*
+float something[] = {
+	0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+	0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+   -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+	0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+	-0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+   -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f
+};
+
 
 const char* vertex_shader =
 "#version 330\n"
@@ -13,14 +25,25 @@ const char* vertex_shader =
 "     gl_Position = vec4 (vp, 1.0);"
 "}";
 
+const char* vertex_shader_uniform =
+"#version 330\n"
+"layout(location=0) in vec3 vp;"
+"layout(location=1) in vec3 vc;"
+"uniform mat4 modelMatrix;"
+"out vec4 vertexColor;"
+"void main () {"
+"     gl_Position = modelMatrix * vec4 (vp, 1.0);" //multiply each verice in vertex shader with the transformation matrix
+"	  vertexColor = vec4(vc, 1.0);"
+"}";
+
 const char* vertex_shader_detail =
 "#version 330\n"
 "layout(location=0) in vec3 vp;"
-"layout(location=1) in vec4 vc;"
+"layout(location=1) in vec3 vc;"
 "out vec4 vertexColor;" //passing color to frag. shader
 "void main () {"
 "     gl_Position = vec4 (vp, 1.0);"
-"	  vertexColor = vc;"
+"	  vertexColor = vec4 (vc, 1.0);" //aplha set to 1.0
 "}";
 
 const char* fragment_shader =
@@ -30,13 +53,6 @@ const char* fragment_shader =
 "     fragColor = vec4 (0.0, 0.5, 0.5, 1.0);"
 "}";
 
-const char* fragment_shader2 =
-"#version 330\n"
-"out vec4 fragColor;"
-"void main () {"
-"     fragColor = vec4 (0.0, 0.8, 0.1, 1.0);"
-"}";
-
 const char* fragment_shader_detail =
 "#version 330\n"
 "in vec4 vertexColor;" //received from vert. shader
@@ -44,6 +60,7 @@ const char* fragment_shader_detail =
 "void main () {"
 "     fragColor = vertexColor;"
 "}";
+*/
 
 App::App() {
 	this->window = nullptr; // otherwise error "uninitialized variable used"
@@ -93,34 +110,47 @@ void App::initialization() {
 	glfwSetWindowFocusCallback(this->window, this->window_focus_callback);
 	glfwSetWindowIconifyCallback(this->window, this->window_iconify_callback);
 	glfwSetWindowSizeCallback(this->window, this->window_size_callback);
+
+	//Model* j = new Model(something, size(something), 3);
+	////this->objects.emplace_back(DrawableObject());
+	this->s = new Scene();
+	
 }
 
 void App::createShaders() {
 	//emplace .. constructs the element and pushes to vector .. needed because of ID in shader
-	this->shaderPrograms.emplace_back(ShaderProgram(vertex_shader, fragment_shader));
-	this->shaderPrograms.emplace_back(ShaderProgram(vertex_shader_detail, fragment_shader_detail));
+	//this->shaderPrograms.emplace_back(ShaderProgram(vertex_shader_uniform, fragment_shader_detail));
 }
 
 void App::createModels() {
-	this->models.emplace_back(Model(2));
-	this->models.at(0).setupSimpleModel();
+	//this->models.emplace_back(Model(something, size(something), 6));
+	//this->models.at(0).setupSimpleModel();
+	////this->objects.at(0).setModel();
 
-	this->models.emplace_back(Model(4));
-	this->models.at(1).setupDetailedModel();
+	s->addGenObject();
 }
 
 void App::run() {
+	//glm::mat4 M = glm::mat4(1.0f); // construct identity matrix
+
+	//float time = (float)glfwGetTime();
+	//float angle = glm::radians(time * 20.f);
+
+	
+
+	glEnable(GL_DEPTH_TEST); // Do depth comparisons and update the depth buff
 	while (!glfwWindowShouldClose(this->window)) {
 		// clear color and depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// detailed model ... from LAB2 square with colors
-		this->shaderPrograms.at(1).useShaderProgram();
-		this->models.at(1).draw();
 
-		// simple model ... triangle on right side
-		this->shaderPrograms.at(0).useShaderProgram();
-		this->models.at(0).draw();
+		//M = glm::rotate(M, angle, glm::vec3(0.0f, 0.0f, 1.0f));
+		//this->shaderPrograms.at(0).useShaderProgram();
+		//this->shaderPrograms.at(0).setUniform("modelMatrix", M);
+		//this->models.at(0).draw();
+		////this->objects.at(0).draw();
+
+		s->draw();
 
 		// update other events like input handling
 		glfwPollEvents(); // For procesing any pending input events (nmouse, keyboard, window)
