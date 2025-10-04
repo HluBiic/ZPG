@@ -1,66 +1,4 @@
-#include <stdio.h>
-#include <cstdlib>
-#include <GL/glew.h>
-
 #include "App.h"
-#include "ShaderProgram.h"
-#include "Model.h"
-#include "DrawableObject.h"
-
-/*
-float something[] = {
-	0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-	0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-   -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-	0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-	-0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-   -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f
-};
-
-
-const char* vertex_shader =
-"#version 330\n"
-"layout(location=0) in vec3 vp;"
-"void main () {"
-"     gl_Position = vec4 (vp, 1.0);"
-"}";
-
-const char* vertex_shader_uniform =
-"#version 330\n"
-"layout(location=0) in vec3 vp;"
-"layout(location=1) in vec3 vc;"
-"uniform mat4 modelMatrix;"
-"out vec4 vertexColor;"
-"void main () {"
-"     gl_Position = modelMatrix * vec4 (vp, 1.0);" //multiply each verice in vertex shader with the transformation matrix
-"	  vertexColor = vec4(vc, 1.0);"
-"}";
-
-const char* vertex_shader_detail =
-"#version 330\n"
-"layout(location=0) in vec3 vp;"
-"layout(location=1) in vec3 vc;"
-"out vec4 vertexColor;" //passing color to frag. shader
-"void main () {"
-"     gl_Position = vec4 (vp, 1.0);"
-"	  vertexColor = vec4 (vc, 1.0);" //aplha set to 1.0
-"}";
-
-const char* fragment_shader =
-"#version 330\n"
-"out vec4 fragColor;"
-"void main () {"
-"     fragColor = vec4 (0.0, 0.5, 0.5, 1.0);"
-"}";
-
-const char* fragment_shader_detail =
-"#version 330\n"
-"in vec4 vertexColor;" //received from vert. shader
-"out vec4 fragColor;"
-"void main () {"
-"     fragColor = vertexColor;"
-"}";
-*/
 
 App::App() {
 	this->window = nullptr; // otherwise error "uninitialized variable used"
@@ -110,47 +48,32 @@ void App::initialization() {
 	glfwSetWindowFocusCallback(this->window, this->window_focus_callback);
 	glfwSetWindowIconifyCallback(this->window, this->window_iconify_callback);
 	glfwSetWindowSizeCallback(this->window, this->window_size_callback);
-
-	//Model* j = new Model(something, size(something), 3);
-	////this->objects.emplace_back(DrawableObject());
-	this->s = new Scene();
-	
+	glfwSetWindowUserPointer(this->window, this); //will store the App instance ptr for accessing class members from static callbacks
 }
 
-void App::createShaders() {
-	//emplace .. constructs the element and pushes to vector .. needed because of ID in shader
-	//this->shaderPrograms.emplace_back(ShaderProgram(vertex_shader_uniform, fragment_shader_detail));
-}
-
-void App::createModels() {
-	//this->models.emplace_back(Model(something, size(something), 6));
-	//this->models.at(0).setupSimpleModel();
-	////this->objects.at(0).setModel();
-
-	s->addGenObject();
+void App::createScenes() {
+	this->scenes.emplace_back(Scene());
+	this->scenes.at(0).basicScene();
+	this->scenes.emplace_back(Scene());
+	this->scenes.at(1).sceneTask6();
+	this->scenes.emplace_back(Scene());
+	this->scenes.at(2).sceneTask7();
 }
 
 void App::run() {
-	//glm::mat4 M = glm::mat4(1.0f); // construct identity matrix
-
-	//float time = (float)glfwGetTime();
-	//float angle = glm::radians(time * 20.f);
-
-	
-
 	glEnable(GL_DEPTH_TEST); // Do depth comparisons and update the depth buff
 	while (!glfwWindowShouldClose(this->window)) {
 		// clear color and depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		float time = (float)glfwGetTime();
 
-		//M = glm::rotate(M, angle, glm::vec3(0.0f, 0.0f, 1.0f));
-		//this->shaderPrograms.at(0).useShaderProgram();
-		//this->shaderPrograms.at(0).setUniform("modelMatrix", M);
-		//this->models.at(0).draw();
-		////this->objects.at(0).draw();
+		
+		// draw the currently chosen scene
+		if (this->currentScene < this->scenes.size()) {
+			this->scenes.at(this->currentScene).draw();
+		}
 
-		s->draw();
 
 		// update other events like input handling
 		glfwPollEvents(); // For procesing any pending input events (nmouse, keyboard, window)
@@ -176,6 +99,27 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	printf("key_callback [%d,%d,%d,%d] \n", key, scancode, action, mods);
+	//scene switchinch via 1-3 numerical keys
+
+	App* app = (App*)glfwGetWindowUserPointer(window); // retrieve the app instance to access the scene index 
+
+	if (action == GLFW_PRESS) {
+		int newIndex = -1;
+		switch (key) {
+			case GLFW_KEY_KP_1:
+				//cout << "switch to scene[0]" << endl;
+				app->currentScene = 0;
+				break;
+			case GLFW_KEY_KP_2:
+				//cout << "switch to scene[1]" << endl;
+				app->currentScene = 1;
+				break;
+			case GLFW_KEY_KP_3:
+				//cout << "switch to scene[3]" << endl;
+				app->currentScene = 2;
+				break;
+		}
+	}
 }
 
 void App::window_focus_callback(GLFWwindow* window, int focused) {

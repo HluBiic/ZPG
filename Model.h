@@ -1,6 +1,18 @@
 #pragma once
 #include <vector>
 #include <GL/glew.h>
+#include <iostream>
+#include <stdio.h>
+#include <cstdlib>
+
+#include "triangle.h"
+#include "square.h"
+#include "sphere.h"
+#include "suzi_smooth.h"
+#include "suzi_flat.h"
+#include "bushes.h"
+#include "gift.h"
+#include "tree.h"
 
 using namespace std;
 
@@ -15,9 +27,6 @@ using namespace std;
 */
 class Model {
 	private:
-		vector<float> simpleMod; // vertex position data for simple models (x,y,z)
-		vector<float> detailMod; // vertex position + color data for detailed models
-
 		vector<float> rawData;
 		int rawVertCount = 0;
 		int floatsPerVert = 0;
@@ -25,26 +34,7 @@ class Model {
 		GLuint VAO = 0; // vertex array object
 		GLuint VBO = 0; // bertex buffer object
 	public:
-
-
-		/* second contructor for advanced models in LAB03*/
 		Model(const float* data, int vertCount, int floatPerVert);
-
-
-
-		/**
-		* @brief Prepares simple model vertex data for render using VBO, VAO.
-		*/
-		void setupSimpleModel();
-
-		/**
-		* @brief Prepares detailed model (with position and colors) vertex data 
-		* for render using VBO, VAO. Sets attribute pointers for position 
-		* (location 0) and color (location 1).
-		*/
-		void setupDetailedModel();
-
-		void setupRawModel();
 
 		/**
 		* @brief Draws the model and automatically selects between GL_TRIANGLE_STRIP

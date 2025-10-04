@@ -1,0 +1,36 @@
+const char vertex_shader_uniform[] =
+	"#version 330\n"
+	"layout(location=0) in vec3 vp;"
+	"layout(location=1) in vec3 vc;"
+	"uniform mat4 modelMatrix;"
+	"out vec4 vertexColor;"
+	"void main () {"
+	"     gl_Position = modelMatrix * vec4 (vp, 1.0);" //multiply each verice in vertex shader with the transformation matrix
+	"	  vertexColor = vec4(vc, 1.0);"
+	"}";
+
+const char vertex_shader_uniform_color[] =
+"#version 330\n"
+"layout(location=0) in vec3 vp;"
+"layout(location=1) in vec3 vc;"
+"uniform mat4 modelMatrix;"
+"void main () {"
+"     gl_Position = modelMatrix * vec4 (vp, 1.0);" //multiply each verice in vertex shader with the transformation matrix
+"}";
+
+const char vertex_shader[] =
+	"#version 330\n"
+	"layout(location=0) in vec3 vp;"
+	"void main () {"
+	"     gl_Position = vec4 (vp, 1.0);"
+	"}";
+
+const char vertex_shader_detail[] =
+	"#version 330\n"
+	"layout(location=0) in vec3 vp;"
+	"layout(location=1) in vec3 vc;"
+	"out vec4 vertexColor;" //passing color to frag. shader
+	"void main () {"
+	"     gl_Position = vec4 (vp, 1.0);"
+	"	  vertexColor = vec4 (vc, 1.0);" //aplha set to 1.0
+	"}";

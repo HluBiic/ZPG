@@ -1,5 +1,4 @@
 #include "ShaderProgram.h"
-#include <iostream>
 
 ShaderProgram::ShaderProgram(const char* vertex_shader, const char* fragment_shader) {
     //create and compile shaders
@@ -32,22 +31,17 @@ ShaderProgram::ShaderProgram(const char* vertex_shader, const char* fragment_sha
     }
 }
 
-/*bool ShaderProgram::setShaderProgram() {
-	return false;
-}*/
-
 void ShaderProgram::useShaderProgram() {
     glUseProgram(this->id);
 }
 
-
 void ShaderProgram::setUniform(const char* name, const glm::mat4& matrix) {
-    GLint loc = glGetUniformLocation(this->id, name);
-    if (loc == -1) {
+    GLint idModelTransform = glGetUniformLocation(this->id, name);
+    if (idModelTransform == -1) {
         cout << "model matrix not found" << endl;
         exit(1);
     }
-    glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(matrix));
+    glUniformMatrix4fv(idModelTransform, 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
 void ShaderProgram::setUniform(const glm::mat4& matrix) {

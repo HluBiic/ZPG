@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string>
-
+#include <iostream>
 
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
@@ -12,6 +12,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "vertex_shaders.h"
+#include "fragment_shaders.h"
 
 using namespace std;
 

@@ -1,4 +1,8 @@
 #pragma once
+#include <stdio.h>
+#include <cstdlib>
+#include <GL/glew.h>
+#include <iostream>
 
 #include "ShaderProgram.h"
 #include "Model.h"
@@ -10,19 +14,17 @@ using namespace std;
 /**
 * @class App
 * @brief 
-* This class manages the App including window creation, shader setup, model
-* creation, rendering loop and setting callback methods. For now contains
-* shaders as const char* items.
+* This class manages the App including window creation, scene setup,
+* rendering loop and setting callback methods.
 *
 * @author HLU0035
 */
 class App {
 	private:
 		GLFWwindow* window; // pointer to the GLFW window
-		vector<ShaderProgram> shaderPrograms; // container for shader programs
-		vector<Model> models; // container for models
-		vector<DrawableObject> objects;
-		Scene* s;
+		vector<Scene> scenes; //container for scenes
+
+		int currentScene = 0; //index of the currently drawn scene...0 for the default scene
 	public:
 		/**
 		* @brief Initializes the window ptr.
@@ -35,16 +37,9 @@ class App {
 		void initialization();
 
 		/**
-		* @brief Creates and compiles shader programs for the app and adding them 
-		* to the shaderPrograms container.
+		* @brief Creates scenes and saves them to the scenes vector.
 		*/
-		void createShaders();
-
-		/**
-		* @brief Creates models, sets up their buffers (VBO, VAO) and adds them
-		* to the models container.
-		*/
-		void createModels();
+		void createScenes();
 
 		/**
 		* @brief Main rendering loop. Clears buffers, draws models and swaps 

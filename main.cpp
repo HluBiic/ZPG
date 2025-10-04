@@ -27,8 +27,7 @@ int main(void) {
 
     a->initialization();
 
-   a->createShaders();
-   a->createModels();    
+   a->createScenes();
 
    a->run();
 }
