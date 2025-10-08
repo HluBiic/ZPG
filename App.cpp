@@ -53,7 +53,8 @@ void App::initialization() {
 
 void App::createScenes() {
 	this->scenes.emplace_back(Scene());
-	this->scenes.at(0).basicScene();
+	this->scenes.at(0).cameraScene();
+	//this->scenes.at(0).basicScene();
 	this->scenes.emplace_back(Scene());
 	this->scenes.at(1).sceneTask6();
 	this->scenes.emplace_back(Scene());

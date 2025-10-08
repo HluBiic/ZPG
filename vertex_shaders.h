@@ -34,3 +34,17 @@ const char vertex_shader_detail[] =
 	"     gl_Position = vec4 (vp, 1.0);"
 	"	  vertexColor = vec4 (vc, 1.0);" //aplha set to 1.0
 	"}";
+
+
+const char vertex_shader_camera[] =
+"#version 330\n"
+"uniform mat4 modelMatrix;"
+"uniform mat4 projectMatrix;"
+"uniform mat4 viewMatrix;"
+"out vec3 vertexColor;"
+"layout(location=0) in vec3 vp;"
+"layout(location=1) in vec3 vn;"
+"void main () {"
+"     vertexColor = vn;"
+"     gl_Position = projectMatrix * viewMatrix * modelMatrix * vec4(vp, 1.0);" //X'= P * V * M * X;
+"}";

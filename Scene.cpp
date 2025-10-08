@@ -6,8 +6,9 @@ Scene::Scene() {}
 void Scene::basicScene() {
 	TransformGroup* tg = new TransformGroup();
 	tg->add(new Scale(glm::vec3(0.3f)));
-	tg->add(new Spin(180.0f, glm::vec3(0.0f, 0.0f, 1.0f))); // spinning 180 degrees per second
-	tg->add(new Translation(glm::vec3(0.0f, -0.5f, 0.0f)));
+	//tg->add(new Spin(180.0f, glm::vec3(0.0f, 0.0f, 1.0f))); // spinning 180 degrees per second
+	tg->add(new Rotation(23.0f, glm::vec3(0.0f, 0.0f,  1.0f)));
+	tg->add(new Translation(glm::vec3(2.0f, -0.5f, 0.0f)));
 
 	this->objects.push_back(
 		new DrawableObject(
@@ -149,14 +150,25 @@ void Scene::sceneTask7() {
 	// 1x suzi
 	TransformGroup* tg5 = new TransformGroup();
 	tg5->add(new Translation(glm::vec3(0.5f, -2.5f, 0.0f)));
-	tg5->add(new Rotation(180, glm::vec3(0.0f, 1.0f, 0.0f)));
-	tg5->add(new Rotation(15, glm::vec3(0.0f, 0.0f, 1.0f)));
+	tg5->add(new Spin(45, glm::vec3(0.0f, 0.0f, 1.0f)));
 	tg5->add(new Scale(glm::vec3(0.2f)));
 	this->objects.push_back(
 		new DrawableObject(
 			new ShaderProgram(vertex_shader_uniform, fragment_shader_detail),
 			new Model(suziFlat, size(suziFlat), 6),
 			tg5
+		)
+	);
+}
+
+void Scene::cameraScene() {
+	TransformGroup* tg = new TransformGroup();
+	tg->add(new Spin(1.0f, glm::vec3(0.0f, 0.0f, 0.0f)));
+	this->objects.push_back(
+		new DrawableObject(
+			new ShaderProgram(vertex_shader_camera, fragment_shader_camera),
+			new Model(sphere, size(sphere), 6),
+			tg
 		)
 	);
 }

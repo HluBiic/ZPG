@@ -13,6 +13,7 @@ public:
 	void basicScene();
 	void sceneTask6();
 	void sceneTask7();
+	void cameraScene();
 	void addObject(DrawableObject* drawObj);
 	void draw();
 };

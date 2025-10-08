@@ -34,6 +34,10 @@ void DrawableObject::setModel() {
 
 void DrawableObject::setTransformation() {
 	this->shaderProgram->setUniform(this->transformation->apply()); //sends the final transformation matrix to shader to calculate pos of each vertex
+	// volat set uniform na projection, view aj model matrix!!!
+	this->shaderProgram->setUniform("projectMatrix", this->transformation->apply());
+	this->shaderProgram->setUniform("viewMatrix", this->transformation->apply());
+	this->shaderProgram->setUniform("modelMatrix", this->transformation->apply());
 }
 
 void DrawableObject::draw() {

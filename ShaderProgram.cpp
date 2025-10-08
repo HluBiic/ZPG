@@ -38,7 +38,7 @@ void ShaderProgram::useShaderProgram() {
 void ShaderProgram::setUniform(const char* name, const glm::mat4& matrix) {
     GLint idModelTransform = glGetUniformLocation(this->id, name);
     if (idModelTransform == -1) {
-        cout << "model matrix not found" << endl;
+        printf("%s not found!\n", name);
         exit(1);
     }
     glUniformMatrix4fv(idModelTransform, 1, GL_FALSE, glm::value_ptr(matrix));
@@ -47,4 +47,3 @@ void ShaderProgram::setUniform(const char* name, const glm::mat4& matrix) {
 void ShaderProgram::setUniform(const glm::mat4& matrix) {
     setUniform("modelMatrix", matrix);
 }
-

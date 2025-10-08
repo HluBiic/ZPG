@@ -49,4 +49,10 @@ class ShaderProgram {
 
 		void setUniform(const char* name, const glm::mat4& matrix);
 		void setUniform(const glm::mat4& matrix);
+
+		// ONLY FOR TESTING PURPOSES !!!
+		/*GLuint getId() {
+			printf( "CAREFULL getId ONLY FOR TESTING PURPOSES remove / comment out before submission of homework!!!!\n");
+			return this->id;
+		}*/
 };

@@ -40,3 +40,11 @@ const char fragment_shader[] = //simple
 	"void main () {"
 	"     fragColor = vec4 (0.0, 0.5, 0.5, 1.0);"
 	"}";
+
+const char fragment_shader_camera[] =
+"#version 330\n"
+"out vec4 fragColor;"
+"in vec3 vertexColor;"
+"void main () {"
+"     fragColor = vec4(vertexColor, 0.0);"
+"}";
