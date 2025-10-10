@@ -25,11 +25,18 @@ class App {
 		vector<Scene> scenes; //container for scenes
 
 		int currentScene = 0; //index of the currently drawn scene...0 for the default scene
-	public:
+
 		/**
 		* @brief Initializes the window ptr.
 		*/
 		App();
+
+		static App* appInstance;
+
+	public:
+		static App* getInstance();
+
+		bool rightMousePressed = false;
 
 		/**
 		* @brief OpenGL initialiyation and prints its info + callbacks.

@@ -1,6 +1,8 @@
 #include "Scene.h"
 
-Scene::Scene() {}
+Scene::Scene() {
+	this->camera = nullptr;
+}
 
 //LAB 03 - TASK 5 - simple spinning triangle
 void Scene::basicScene() {
@@ -162,15 +164,47 @@ void Scene::sceneTask7() {
 }
 
 void Scene::cameraScene() {
-	TransformGroup* tg = new TransformGroup();
-	tg->add(new Spin(1.0f, glm::vec3(0.0f, 0.0f, 0.0f)));
-	this->objects.push_back(
-		new DrawableObject(
-			new ShaderProgram(vertex_shader_camera, fragment_shader_camera),
-			new Model(sphere, size(sphere), 6),
-			tg
-		)
-	);
+	this->camera = new Camera();
+	ShaderProgram* sp = new ShaderProgram(vertex_shader_camera, fragment_shader_camera);
+	this->camera->registerObserver(sp);
+
+	Model* treeModel = new Model(tree, size(tree), 6);
+	Model* bushModel = new Model(bushes, size(bushes), 6);
+
+	float xTreeOffset = 0.0f;
+	float yTreeBushOffset = 0.0f;//same for all trees + bushes
+	float zTreeOffset = 0.0f;
+
+	float xBushOffset = 0.0f;
+	float zBushOffest = 0.0f;
+
+	for (int i = 0; i < 50; i++) {
+		//get rand x and z offsets
+		xTreeOffset = 0.5f + (float)(rand()) / RAND_MAX * (60.0f - 0.5f);
+		zTreeOffset = 0.5f + (float)(rand()) / RAND_MAX * (60.0f - 0.5f);
+		xBushOffset = 0.5f + (float)(rand()) / RAND_MAX * (20.0f - 0.5f);
+		zBushOffest = 0.5f + (float)(rand()) / RAND_MAX * (20.0f - 0.5f);
+
+		//50 tree objects
+		TransformGroup* tgTree = new TransformGroup();
+		tgTree->add(new Translation(glm::vec3(xTreeOffset, yTreeBushOffset, zTreeOffset)));
+		tgTree->add(new Scale(glm::vec3(0.1f)));
+		this->objects.push_back(
+			new DrawableObject(
+				sp, treeModel, tgTree
+			)
+		);
+
+		//50 bushes objects
+		TransformGroup* tgBush = new TransformGroup();
+		tgBush->add(new Translation(glm::vec3(xBushOffset, yTreeBushOffset, zBushOffest)));
+		tgBush->add(new Scale(glm::vec3(0.3f)));
+		this->objects.push_back(
+			new DrawableObject(
+				sp, bushModel, tgBush
+			)
+		);
+	}
 }
 
 void Scene::addObject(DrawableObject* drawObj) {
@@ -179,7 +213,12 @@ void Scene::addObject(DrawableObject* drawObj) {
 
 
 void Scene::draw() {
-	for (int i = 0; i < this->objects.size(); i++) {
-		this->objects.at(i)->draw();
+	for (auto o : this->objects) {
+		o->draw();
 	}
+	this->camera->notifyObservers();
+}
+
+void Scene::moveCam(int key) {
+	this->camera->move(key);
 }

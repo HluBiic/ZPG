@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string>
 #include <iostream>
+#include <vector>
 
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
@@ -26,6 +27,7 @@ using namespace std;
 * 
 * @author HLU0035
 */
+class Camera;
 class ShaderProgram {
 	private:
 		GLuint id; // ID which is kept private and never exposed outside this class
@@ -46,9 +48,10 @@ class ShaderProgram {
 		*/
 		void useShaderProgram();
 
-
 		void setUniform(const char* name, const glm::mat4& matrix);
 		void setUniform(const glm::mat4& matrix);
+
+		void updateCam(glm::mat4& viewMatrix, glm::mat4& projectionMatrix);
 
 		// ONLY FOR TESTING PURPOSES !!!
 		/*GLuint getId() {

@@ -1,4 +1,5 @@
 #include "ShaderProgram.h"
+#include "Camera.h"
 
 ShaderProgram::ShaderProgram(const char* vertex_shader, const char* fragment_shader) {
     //create and compile shaders
@@ -39,11 +40,16 @@ void ShaderProgram::setUniform(const char* name, const glm::mat4& matrix) {
     GLint idModelTransform = glGetUniformLocation(this->id, name);
     if (idModelTransform == -1) {
         printf("%s not found!\n", name);
-        exit(1);
+        //exit(1);
     }
     glUniformMatrix4fv(idModelTransform, 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
 void ShaderProgram::setUniform(const glm::mat4& matrix) {
     setUniform("modelMatrix", matrix);
+}
+
+void ShaderProgram::updateCam(glm::mat4& viewMatrix, glm::mat4& projectionMatrix) {
+    setUniform("viewMatrix", viewMatrix);
+    setUniform("projectMatrix", projectionMatrix);
 }

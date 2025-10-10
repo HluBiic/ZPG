@@ -131,6 +131,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DrawableObject.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
@@ -146,6 +147,7 @@
   <ItemGroup>
     <ClInclude Include="App.h" />
     <ClInclude Include="bushes.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="DrawableObject.h" />
     <ClInclude Include="fragment_shaders.h" />
     <ClInclude Include="gift.h" />

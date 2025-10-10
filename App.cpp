@@ -1,7 +1,18 @@
 #include "App.h"
 
+App* App::appInstance = nullptr;
+
 App::App() {
 	this->window = nullptr; // otherwise error "uninitialized variable used"
+}
+
+App* App::getInstance() {
+	if (appInstance == nullptr) {
+		appInstance = new App(); 
+	} else {
+		printf("App instance already created. Returning original instance.\n");
+	}
+	return appInstance;
 }
 
 void App::initialization() {
@@ -54,11 +65,6 @@ void App::initialization() {
 void App::createScenes() {
 	this->scenes.emplace_back(Scene());
 	this->scenes.at(0).cameraScene();
-	//this->scenes.at(0).basicScene();
-	this->scenes.emplace_back(Scene());
-	this->scenes.at(1).sceneTask6();
-	this->scenes.emplace_back(Scene());
-	this->scenes.at(2).sceneTask7();
 }
 
 void App::run() {
@@ -67,14 +73,10 @@ void App::run() {
 		// clear color and depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		float time = (float)glfwGetTime();
-
-		
 		// draw the currently chosen scene
 		if (this->currentScene < this->scenes.size()) {
 			this->scenes.at(this->currentScene).draw();
 		}
-
 
 		// update other events like input handling
 		glfwPollEvents(); // For procesing any pending input events (nmouse, keyboard, window)
@@ -90,6 +92,8 @@ void App::run() {
 
 void App::cursor_pos_callback(GLFWwindow* window, double mouseX, double mouseY) {
 	printf("cursor_pos_callback %d, %d;\n", (int)mouseX, (int)mouseY );
+	App* app = (App*)glfwGetWindowUserPointer(window);
+	app->scenes.at(app->currentScene).camera->mouseMovement(mouseX, mouseY);
 }
 
 void App::error_callback(int error, const char* description) {
@@ -100,24 +104,27 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	printf("key_callback [%d,%d,%d,%d] \n", key, scancode, action, mods);
-	//scene switchinch via 1-3 numerical keys
+	//scene switchinch via 1-3 numerical keys + cam moving with wasd
 
 	App* app = (App*)glfwGetWindowUserPointer(window); // retrieve the app instance to access the scene index 
 
-	if (action == GLFW_PRESS) {
+	if (action == GLFW_PRESS || action == GLFW_REPEAT) { //GLFW_REPEAT - for button holding down
 		int newIndex = -1;
 		switch (key) {
 			case GLFW_KEY_KP_1:
-				//cout << "switch to scene[0]" << endl;
 				app->currentScene = 0;
 				break;
 			case GLFW_KEY_KP_2:
-				//cout << "switch to scene[1]" << endl;
 				app->currentScene = 1;
 				break;
 			case GLFW_KEY_KP_3:
-				//cout << "switch to scene[3]" << endl;
 				app->currentScene = 2;
+				break;
+			case GLFW_KEY_W:
+			case GLFW_KEY_A:
+			case GLFW_KEY_S:
+			case GLFW_KEY_D:
+				app->scenes.at(app->currentScene).camera->move(key);
 				break;
 		}
 	}
@@ -134,6 +141,9 @@ void App::window_iconify_callback(GLFWwindow* window, int iconified) {
 void App::window_size_callback(GLFWwindow* window, int width, int height) {
 	printf("resize %d, %d \n", width, height);
 	glViewport(0, 0, width, height);
+
+	App* app = (App*)glfwGetWindowUserPointer(window); // retrieve the app instance to access the scene index 
+	app->scenes.at(app->currentScene).camera->setViewportSize(width, height);//cam will notify all shader programs about resizing
 }
 
 void App::cursor_callback(GLFWwindow* window, double x, double y) {
@@ -142,4 +152,17 @@ void App::cursor_callback(GLFWwindow* window, double x, double y) {
 
 void App::button_callback(GLFWwindow* window, int button, int action, int mode) {
 	if (action == GLFW_PRESS) printf("button_callback [%d,%d,%d]\n", button, action, mode);
+	App* app = (App*)glfwGetWindowUserPointer(window);
+	if (button == GLFW_MOUSE_BUTTON_RIGHT) {
+		if (action == GLFW_PRESS) {
+			app->scenes.at(app->currentScene).camera->rotating = true;
+			double x, y;
+			glfwGetCursorPos(window, &x, &y);
+			app->scenes.at(app->currentScene).camera->lastX = (float)x;
+			app->scenes.at(app->currentScene).camera->lastY = (float)y;
+		}
+		else if (action == GLFW_RELEASE) {
+			app->scenes.at(app->currentScene).camera->rotating = false;
+		}
+	}
 }
