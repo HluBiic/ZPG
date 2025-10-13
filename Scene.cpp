@@ -23,6 +23,17 @@ void Scene::basicScene() {
 
 //LAB 3 - TASK 6 - 4x spheres symetricaly placed along axes
 void Scene::sceneTask6() {
+	this->camera = new Camera();
+	Shader* vertexShader = new Shader();
+	vertexShader->createShaderFromFile(GL_VERTEX_SHADER, "test_vertex_shader.glsl");
+	Shader* fragmentShader = new Shader();
+	fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, "test_fragment_shader.glsl");
+	ShaderProgram* sp = new ShaderProgram(vertexShader, fragmentShader);
+
+
+	//ShaderProgram* sp = new ShaderProgram(vertex_shader_lights, fragment_shader_light);
+	this->camera->registerObserver(sp);
+
 	TransformGroup* tg1 = new TransformGroup();
 	tg1->add(new Translation(glm::vec3(0.0f, -2.0f, 0.0f)));
 	tg1->add(new Scale(glm::vec3(0.1f)));
@@ -32,37 +43,37 @@ void Scene::sceneTask6() {
 	tg2->add(new Scale(glm::vec3(0.1f)));
 
 	TransformGroup* tg3 = new TransformGroup();
-	tg3->add(new Translation(glm::vec3(2.0f, 0.0f, 0.0f)));
+	tg3->add(new Translation(glm::vec3(0.0f, 0.0f, 2.0f)));
 	tg3->add(new Scale(glm::vec3(0.1f)));
 
 	TransformGroup* tg4 = new TransformGroup();
-	tg4->add(new Translation(glm::vec3(-2.0f, 0.0f, 0.0f)));
+	tg4->add(new Translation(glm::vec3(0.0f, 0.0f, -2.0f)));
 	tg4->add(new Scale(glm::vec3(0.1f)));
 
 	this->objects.push_back(
 		new DrawableObject(
-			new ShaderProgram(vertex_shader_uniform, fragment_shader_detail),
+			sp,
 			new Model(sphere, size(sphere), 6),
 			tg1
 		)
 	);
 	this->objects.push_back(
 		new DrawableObject(
-			new ShaderProgram(vertex_shader_uniform, fragment_shader_detail),
+			sp,
 			new Model(sphere, size(sphere), 6),
 			tg2
 		)
 	);
 	this->objects.push_back(
 		new DrawableObject(
-			new ShaderProgram(vertex_shader_uniform, fragment_shader_detail),
+			sp,
 			new Model(sphere, size(sphere), 6),
 			tg3
 		)
 	);
 	this->objects.push_back(
 		new DrawableObject(
-			new ShaderProgram(vertex_shader_uniform, fragment_shader_detail),
+			sp,
 			new Model(sphere, size(sphere), 6),
 			tg4
 		)
@@ -211,12 +222,11 @@ void Scene::addObject(DrawableObject* drawObj) {
 	this->objects.push_back(drawObj);
 }
 
-
 void Scene::draw() {
 	for (auto o : this->objects) {
 		o->draw();
 	}
-	this->camera->notifyObservers();
+	this->camera->notifyAll();
 }
 
 void Scene::moveCam(int key) {

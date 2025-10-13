@@ -7,7 +7,7 @@
 //Default cam constru. with predefined vals.
 Camera::Camera() {
 	this->eye = glm::vec3(0.5f, 0.0f, 0.0f);
-	this->target = glm::vec3(0.0f, 0.0f, -1.0f); //looking towards origin
+	this->target = glm::vec3(-1.0f, 0.0f, 0.0f); //looking towards origin
 	this->up = glm::vec3(0.0f, 1.0f, 0.0f);
 	this->lastX = 400.f;
 	this->lastY = 300.f;
@@ -23,28 +23,26 @@ glm::mat4 Camera::updateProjectionMatrix() {
 	return glm::perspective(glm::radians(this->fovyDeg), (float)this->width / (float)this->height, this->zNear, this->zFar);
 }
 
-void Camera::registerObserver(ShaderProgram* sp) {
+void Camera::registerObserver(ICamObserver* sp) {
 	this->observers.push_back(sp);
 }
 
-void Camera::unregisterObserver(ShaderProgram* sp) {
+void Camera::unregisterObserver(ICamObserver* sp) {
 	this->observers.erase(remove(observers.begin(), observers.end(), sp), observers.end()); //removing by val. of sp
 }
 
-void Camera::notifyObservers() {
+void Camera::notifyAll() {
 	glm::mat4 view = updateViewMatrix();
 	glm::mat4 proj = updateProjectionMatrix();
-	for (auto sp : observers) {
-		if (sp) {
-			sp->updateCam(view, proj);
-		}
+	for (auto o: observers) {
+		o->camUpdated(view, proj);
 	}
 }
 
 void Camera::setViewportSize(int w, int h) {
 	this->width = w;
 	this->height = h;
-	notifyObservers();
+	notifyAll();
 }
 
 void Camera::mouseMovement(double xpos, double ypos) {
@@ -75,7 +73,7 @@ void Camera::mouseMovement(double xpos, double ypos) {
 	this->target.y = sin(this->fi);
 	this->target.z = cos(this->fi) * sin(this->alpha);
 
-	notifyObservers();
+	notifyAll();
 }
 
 void Camera::move(int key) {
@@ -93,5 +91,5 @@ void Camera::move(int key) {
 		this->eye += glm::normalize(glm::cross(this->target, this->up)) * this->cameraSpeed;
 		break;
 	}
-	notifyObservers();
+	notifyAll();
 }

@@ -19,6 +19,8 @@ public:
 	void sceneTask7();
 	void cameraScene();
 	void addObject(DrawableObject* drawObj);
+	void cameraScene2();
+
 	void draw();
 
 	void moveCam(int key);

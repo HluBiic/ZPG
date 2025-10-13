@@ -64,7 +64,8 @@ void App::initialization() {
 
 void App::createScenes() {
 	this->scenes.emplace_back(Scene());
-	this->scenes.at(0).cameraScene();
+	//this->scenes.at(0).cameraScene();
+	this->scenes.at(0).sceneTask6();
 }
 
 void App::run() {

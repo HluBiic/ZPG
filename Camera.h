@@ -2,10 +2,12 @@
 #include <glm/ext/matrix_float4x4.hpp>
 #include <vector>
 
+#include "ICamObserver.h"
+
 using namespace std;
 
-class ShaderProgram;//forward dec.
-class Camera {
+//class ShaderProgram;//forward dec.
+class Camera { //the Subject of the observer design pattern
 private:
 	glm::vec3 eye;
 	glm::vec3 target;
@@ -24,7 +26,7 @@ private:
 	int width = 800;
 	int height = 600;
 
-	vector<ShaderProgram*> observers;
+	vector<ICamObserver*> observers;
 public:
 	//vars for mouse cam. movements
 	bool rotating = false;//RMB held?
@@ -39,9 +41,9 @@ public:
 	void move(int key);
 	void mouseMovement(double x, double y);
 
-	void registerObserver(ShaderProgram* sp);
-	void unregisterObserver(ShaderProgram* sp);
-	void notifyObservers(); // sends view + projection M to all observers
+	void registerObserver(ICamObserver* sp);
+	void unregisterObserver(ICamObserver* sp);
+	void notifyAll(); // sends view + projection M to all observers
 
 	//update origin. viewport
 	void setViewportSize(int w, int h);

@@ -9,9 +9,34 @@ ShaderProgram::ShaderProgram(const char* vertex_shader, const char* fragment_sha
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragmentShader, 1, &fragment_shader, NULL);
     glCompileShader(fragmentShader);
+
     this->id = glCreateProgram();
     glAttachShader(this->id, fragmentShader);
     glAttachShader(this->id, vertexShader);
+    glLinkProgram(this->id);
+
+
+    //control of compilation and program shader linking
+    GLint status;
+    glGetProgramiv(this->id, GL_LINK_STATUS, &status);
+    if (status == GL_FALSE) {
+        GLint infoLogLength;
+        glGetProgramiv(this->id, GL_INFO_LOG_LENGTH, &infoLogLength);
+        GLchar* strInfoLog = new GLchar[infoLogLength + 1];
+        glGetProgramInfoLog(this->id, infoLogLength, NULL, strInfoLog);
+        fprintf(stderr, "Linker failure: %s\n", strInfoLog);
+        delete[] strInfoLog;
+        exit(1);
+    }
+    else {
+        printf("Compilation + linkiing successfull\n");
+    }
+}
+
+ShaderProgram::ShaderProgram(Shader* vertexShader, Shader* fragmentShader) {
+    this->id = glCreateProgram();
+    vertexShader->attachShader(this->id);
+    fragmentShader->attachShader(this->id);
     glLinkProgram(this->id);
 
 
@@ -49,7 +74,7 @@ void ShaderProgram::setUniform(const glm::mat4& matrix) {
     setUniform("modelMatrix", matrix);
 }
 
-void ShaderProgram::updateCam(glm::mat4& viewMatrix, glm::mat4& projectionMatrix) {
+void ShaderProgram::camUpdated(glm::mat4 viewMatrix, glm::mat4 projectionMatrix) {
     setUniform("viewMatrix", viewMatrix);
     setUniform("projectMatrix", projectionMatrix);
 }

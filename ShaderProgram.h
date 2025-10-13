@@ -15,6 +15,8 @@
 
 #include "vertex_shaders.h"
 #include "fragment_shaders.h"
+#include "ICamObserver.h"
+#include "Shader.h"
 
 using namespace std;
 
@@ -27,8 +29,8 @@ using namespace std;
 * 
 * @author HLU0035
 */
-class Camera;
-class ShaderProgram {
+//class Camera;
+class ShaderProgram : public ICamObserver {
 	private:
 		GLuint id; // ID which is kept private and never exposed outside this class
 	public:
@@ -41,6 +43,7 @@ class ShaderProgram {
 		*/
 		ShaderProgram(const char* vertexShader, const char* fragmentShader);
 		//bool setShaderProgram();
+		ShaderProgram(Shader* vertexShader, Shader* fragmentShader);
 
 		/**
 		* @brief Activates the shader program for rendering. Calls glUseProgram()
@@ -51,7 +54,7 @@ class ShaderProgram {
 		void setUniform(const char* name, const glm::mat4& matrix);
 		void setUniform(const glm::mat4& matrix);
 
-		void updateCam(glm::mat4& viewMatrix, glm::mat4& projectionMatrix);
+		void camUpdated(glm::mat4 viewMatrix, glm::mat4 projectionMatrix) override;
 
 		// ONLY FOR TESTING PURPOSES !!!
 		/*GLuint getId() {
