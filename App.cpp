@@ -64,8 +64,14 @@ void App::initialization() {
 
 void App::createScenes() {
 	this->scenes.emplace_back(Scene());
-	//this->scenes.at(0).cameraScene();
-	this->scenes.at(0).sceneTask6();
+	this->scenes.emplace_back(Scene());
+	this->scenes.emplace_back(Scene());
+
+	this->scenes.at(0).basicScene();
+	this->scenes.at(1).symetricalSpheresScene();
+	//this->scenes.at(1).allLightShadersTestScene();
+	//this->scenes.at(2).forestScene();
+	this->scenes.at(2).galaxy();
 }
 
 void App::run() {

@@ -6,17 +6,15 @@
 #include <string>
 #include <iostream>
 #include <vector>
-
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "vertex_shaders.h"
-#include "fragment_shaders.h"
-#include "ICamObserver.h"
+#include "IObserver.h"
 #include "Shader.h"
+#include "Camera.h"
 
 using namespace std;
 
@@ -30,7 +28,7 @@ using namespace std;
 * @author HLU0035
 */
 //class Camera;
-class ShaderProgram : public ICamObserver {
+class ShaderProgram : public IObserver /*public ICamObserver, public ILightObserver*/ {
 	private:
 		GLuint id; // ID which is kept private and never exposed outside this class
 	public:
@@ -53,8 +51,10 @@ class ShaderProgram : public ICamObserver {
 
 		void setUniform(const char* name, const glm::mat4& matrix);
 		void setUniform(const glm::mat4& matrix);
+		void setUniform(const char* name, const glm::vec3&);
 
-		void camUpdated(glm::mat4 viewMatrix, glm::mat4 projectionMatrix) override;
+		void camUpdated(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, glm::vec3 camPosition) override;
+		void lightUpdate(glm::vec3 lightPos) override;
 
 		// ONLY FOR TESTING PURPOSES !!!
 		/*GLuint getId() {

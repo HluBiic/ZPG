@@ -13,6 +13,7 @@
 #include "bushes.h"
 #include "gift.h"
 #include "tree.h"
+#include "plain.h"
 
 using namespace std;
 

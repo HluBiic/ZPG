@@ -1,8 +1,8 @@
-#include "DrawableObject.h"
+﻿#include "DrawableObject.h"
 
 
 //simple square for testign purposes with given shaders and given transfomrations
-DrawableObject::DrawableObject() {
+/*DrawableObject::DrawableObject() {
 	this->shaderProgram = new ShaderProgram(vertex_shader_uniform, fragment_shader_detail);
 	this->model = new Model(triangle, size(triangle), 6);
 	
@@ -16,7 +16,7 @@ DrawableObject::DrawableObject() {
 	tg->add(new Translation(glm::vec3(0.0f, -0.5f, 0.0f)));
 	
 	this->transformation = tg;
-}
+}*/
 
 DrawableObject::DrawableObject(ShaderProgram* sp, Model* m, Transformation* t) {
 	this->shaderProgram = sp;

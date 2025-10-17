@@ -1,5 +1,4 @@
 #include "ShaderProgram.h"
-#include "Camera.h"
 
 ShaderProgram::ShaderProgram(const char* vertex_shader, const char* fragment_shader) {
     //create and compile shaders
@@ -74,7 +73,23 @@ void ShaderProgram::setUniform(const glm::mat4& matrix) {
     setUniform("modelMatrix", matrix);
 }
 
-void ShaderProgram::camUpdated(glm::mat4 viewMatrix, glm::mat4 projectionMatrix) {
+void ShaderProgram::setUniform(const char* name, const glm::vec3& camPosVector) { //for phong lighting 
+    GLint idModelTransform = glGetUniformLocation(this->id, name);
+    if (idModelTransform == -1) {
+        printf("%s not found!\n", name);
+        //exit(1);
+    }
+    glUniform3fv(idModelTransform, 1, glm::value_ptr(camPosVector));
+}
+
+void ShaderProgram::camUpdated(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, glm::vec3 camPosition) {
+    this->useShaderProgram(); //otherwise only 1 shader was shown even when multiple were used
     setUniform("viewMatrix", viewMatrix);
     setUniform("projectMatrix", projectionMatrix);
+    setUniform("camPosition", camPosition);
+}
+
+void ShaderProgram::lightUpdate(glm::vec3 lightPos) {
+    this->useShaderProgram();
+    setUniform("lightPosition", lightPos);
 }

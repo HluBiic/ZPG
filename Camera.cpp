@@ -6,7 +6,7 @@
 
 //Default cam constru. with predefined vals.
 Camera::Camera() {
-	this->eye = glm::vec3(0.5f, 0.0f, 0.0f);
+	this->eye = glm::vec3(0.5f, 0.0f, 0.0f); //cameraPos in phong shader
 	this->target = glm::vec3(-1.0f, 0.0f, 0.0f); //looking towards origin
 	this->up = glm::vec3(0.0f, 1.0f, 0.0f);
 	this->lastX = 400.f;
@@ -23,11 +23,11 @@ glm::mat4 Camera::updateProjectionMatrix() {
 	return glm::perspective(glm::radians(this->fovyDeg), (float)this->width / (float)this->height, this->zNear, this->zFar);
 }
 
-void Camera::registerObserver(ICamObserver* sp) {
+void Camera::registerObserver(IObserver* sp) {
 	this->observers.push_back(sp);
 }
 
-void Camera::unregisterObserver(ICamObserver* sp) {
+void Camera::unregisterObserver(IObserver* sp) {
 	this->observers.erase(remove(observers.begin(), observers.end(), sp), observers.end()); //removing by val. of sp
 }
 
@@ -35,7 +35,7 @@ void Camera::notifyAll() {
 	glm::mat4 view = updateViewMatrix();
 	glm::mat4 proj = updateProjectionMatrix();
 	for (auto o: observers) {
-		o->camUpdated(view, proj);
+		o->camUpdated(view, proj, this->eye);
 	}
 }
 
