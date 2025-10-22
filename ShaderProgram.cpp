@@ -82,14 +82,28 @@ void ShaderProgram::setUniform(const char* name, const glm::vec3& camPosVector) 
     glUniform3fv(idModelTransform, 1, glm::value_ptr(camPosVector));
 }
 
-void ShaderProgram::camUpdated(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, glm::vec3 camPosition) {
+void ShaderProgram::update(ObserverSubject* s) {
+    if (auto* camera = dynamic_cast<Camera*>(s)) {
+        this->useShaderProgram();
+        setUniform("viewMatrix", camera->getViewMatrix());
+        setUniform("projectMatrix", camera->getProjectionMatrix());
+        setUniform("camPosition", camera->eye);
+    }
+
+    if (auto* light = dynamic_cast<Light*>(s)) {
+        this->useShaderProgram();
+        setUniform("lightPosition", light->getLightPos());
+    }
+}
+
+/*void ShaderProgram::camUpdated(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, glm::vec3 camPosition) {
     this->useShaderProgram(); //otherwise only 1 shader was shown even when multiple were used
     setUniform("viewMatrix", viewMatrix);
     setUniform("projectMatrix", projectionMatrix);
-    setUniform("camPosition", camPosition);
+    setUniform("camPosition", camPosition);...camera.eye
 }
 
 void ShaderProgram::lightUpdate(glm::vec3 lightPos) {
     this->useShaderProgram();
     setUniform("lightPosition", lightPos);
-}
+}*/

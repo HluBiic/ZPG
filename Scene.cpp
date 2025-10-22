@@ -2,7 +2,7 @@
 
 Scene::Scene() {
 	this->camera = new Camera();
-	this->lights.push_back(new Light(glm::vec3(10.0, 10.0, 0.0)));
+	this->lights.push_back(new Light(glm::vec3(0.0, 0.0, 0.0)));
 }
 
 //LAB 05 - TASK 3a - simple static triangle
@@ -21,7 +21,7 @@ void Scene::basicScene() {
 	this->lights.at(0)->registerObserver(sp);
 
 	Model* m = new Model(triangle, size(triangle), 6);
-
+	
 	this->objects.push_back(new DrawableObject(sp, m, tg));
 }
 
@@ -30,7 +30,7 @@ void Scene::symetricalSpheresScene() {
 	Shader* vertexShader = new Shader();
 	vertexShader->createShaderFromFile(GL_VERTEX_SHADER, "vertex_shader.glsl");
 	Shader* fragmentShader = new Shader();
-	fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, "blinn_fragment_shader.glsl");
+	fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, "phong_fragment_shader.glsl");
 	ShaderProgram* sp = new ShaderProgram(vertexShader, fragmentShader);
 
 	this->camera->registerObserver(sp);
@@ -120,7 +120,7 @@ void Scene::forestScene() {
 	Shader* vertexShader = new Shader();
 	vertexShader->createShaderFromFile(GL_VERTEX_SHADER, "vertex_shader.glsl");
 	Shader* fragmentShader = new Shader();
-	fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, "blinn_fragment_shader.glsl");
+	fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, "phong_fragment_shader.glsl");
 	ShaderProgram* sp = new ShaderProgram(vertexShader, fragmentShader);
 
 	this->camera->registerObserver(sp);
@@ -177,7 +177,7 @@ void Scene::galaxy() {
     Shader* vertexShader = new Shader();
     vertexShader->createShaderFromFile(GL_VERTEX_SHADER, "vertex_shader.glsl");
     Shader* fragmentShader = new Shader();
-    fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, "phong_fragment_shader.glsl");
+    fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, "blinn_fragment_shader.glsl");
     ShaderProgram* sp = new ShaderProgram(vertexShader, fragmentShader);
 
     this->camera->registerObserver(sp);
@@ -225,8 +225,8 @@ void Scene::addObject(DrawableObject* drawObj) {
 }
 
 void Scene::draw() {
-	this->lights.at(0)->notifyAll();
-	this->camera->notifyAll();
+	this->lights.at(0)->onChange();
+	this->camera->onChange();
 
 	// draw objects
 	for (auto o : this->objects) {

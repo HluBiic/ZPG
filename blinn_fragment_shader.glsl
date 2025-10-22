@@ -10,7 +10,7 @@ uniform vec3 lightPosition;
 
 void main () {
 	//vec3 lightPosition = vec3(0.0,0.0,0.0); //Point Light position
-	vec3 lightDir = normalize(lightPosition - worldPosition.xyz); //vector from surface point to the light source
+	vec3 lightDir = normalize(lightPosition - (worldPosition.xyz / worldPosition.w)); //vector from surface point to the light source
 	vec3 norm = normalize(worldNormal);
 
 	vec4 objectColor = vec4 (0.385, 0.647, 0.812, 1.0);

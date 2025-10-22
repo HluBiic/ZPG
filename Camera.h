@@ -2,15 +2,13 @@
 #include <glm/ext/matrix_float4x4.hpp>
 #include <vector>
 
-#include "IObserver.h"
+#include "ObserverSubject.h"
 
 using namespace std;
 
 //class ShaderProgram;//forward dec.
-class Camera { //the Subject of the observer design pattern
+class Camera : public ObserverSubject { //the Subject of the observer design pattern
 private:
-
-
 	float alpha;
 	float fi;
 
@@ -24,7 +22,7 @@ private:
 	int width = 800;
 	int height = 600;
 
-	vector<IObserver*> observers;
+	//vector<IObserver*> observers;
 
 public:
 	//vars for mouse cam. movements
@@ -37,15 +35,15 @@ public:
 	Camera();
 	//TODO in future if needed - for now all via general no-param constructor
 	//Camera(glm::vec3 eye, glm::vec3 target, glm::vec3 up);
-	glm::mat4 updateViewMatrix();
-	glm::mat4 updateProjectionMatrix();
+	glm::mat4 getViewMatrix();
+	glm::mat4 getProjectionMatrix();
 
 	void move(int key);
 	void mouseMovement(double x, double y);
 
-	void registerObserver(IObserver* sp);
-	void unregisterObserver(IObserver* sp);
-	void notifyAll(); // sends view + projection M to all observers
+	//void registerObserver(IObserver* sp);
+	//void unregisterObserver(IObserver* sp);
+	void onChange(); //notify all when state changes
 
 	//update origin. viewport
 	void setViewportSize(int w, int h);

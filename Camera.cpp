@@ -15,34 +15,31 @@ Camera::Camera() {
 	this->fi = glm::radians(0.0f);
 }
 
-glm::mat4 Camera::updateViewMatrix() {
+glm::mat4 Camera::getViewMatrix() {
 	return glm::lookAt(this->eye, this->eye + this->target, this->up);
 }
 
-glm::mat4 Camera::updateProjectionMatrix() {
+glm::mat4 Camera::getProjectionMatrix() {
+	//first param as radiants otherwise fish eye like camera
 	return glm::perspective(glm::radians(this->fovyDeg), (float)this->width / (float)this->height, this->zNear, this->zFar);
 }
 
-void Camera::registerObserver(IObserver* sp) {
+/*void Camera::registerObserver(IObserver* sp) {
 	this->observers.push_back(sp);
 }
 
 void Camera::unregisterObserver(IObserver* sp) {
 	this->observers.erase(remove(observers.begin(), observers.end(), sp), observers.end()); //removing by val. of sp
-}
+}*/
 
-void Camera::notifyAll() {
-	glm::mat4 view = updateViewMatrix();
-	glm::mat4 proj = updateProjectionMatrix();
-	for (auto o: observers) {
-		o->camUpdated(view, proj, this->eye);
-	}
+void Camera::onChange() {
+	notifyObservers();
 }
 
 void Camera::setViewportSize(int w, int h) {
 	this->width = w;
 	this->height = h;
-	notifyAll();
+	onChange();
 }
 
 void Camera::mouseMovement(double xpos, double ypos) {
@@ -73,7 +70,7 @@ void Camera::mouseMovement(double xpos, double ypos) {
 	this->target.y = sin(this->fi);
 	this->target.z = cos(this->fi) * sin(this->alpha);
 
-	notifyAll();
+	onChange();
 }
 
 void Camera::move(int key) {
@@ -91,5 +88,5 @@ void Camera::move(int key) {
 		this->eye += glm::normalize(glm::cross(this->target, this->up)) * this->cameraSpeed;
 		break;
 	}
-	notifyAll();
+	onChange();
 }

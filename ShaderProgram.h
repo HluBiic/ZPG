@@ -15,6 +15,7 @@
 #include "IObserver.h"
 #include "Shader.h"
 #include "Camera.h"
+#include "Light.h"
 
 using namespace std;
 
@@ -53,8 +54,9 @@ class ShaderProgram : public IObserver /*public ICamObserver, public ILightObser
 		void setUniform(const glm::mat4& matrix);
 		void setUniform(const char* name, const glm::vec3&);
 
-		void camUpdated(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, glm::vec3 camPosition) override;
-		void lightUpdate(glm::vec3 lightPos) override;
+		//void camUpdated(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, glm::vec3 camPosition) override;
+		//void lightUpdate(glm::vec3 lightPos) override;
+		void update(ObserverSubject* s) override;
 
 		// ONLY FOR TESTING PURPOSES !!!
 		/*GLuint getId() {

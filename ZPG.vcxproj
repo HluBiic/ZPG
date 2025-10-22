@@ -136,6 +136,7 @@
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="ObserverSubject.cpp" />
     <ClCompile Include="Rotation.cpp" />
     <ClCompile Include="Scale.cpp" />
     <ClCompile Include="Scene.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="gift.h" />
     <ClInclude Include="IObserver.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="ObserverSubject.h" />
     <ClInclude Include="plain.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="tree.h" />

@@ -10,7 +10,7 @@ uniform vec3 lightPosition;
 
 void main () {
 	vec3 temp = camPosition;//otherwise camPos not found bcs GLSL will optimize the ones that are only declared and not used
-	vec3 lightToVector = lightPosition - worldPosition.xyz; //vector from surface point to the light source
+	vec3 lightToVector = normalize(lightPosition - (worldPosition.xyz / worldPosition.w)); //vector from surface point to the light source
 	
 	vec4 objectColor = vec4 (0.385, 0.647, 0.812, 1.0);
 
