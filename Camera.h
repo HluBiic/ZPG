@@ -12,7 +12,7 @@ private:
 	float alpha;
 	float fi;
 
-	float fovyDeg = 90.0f;
+	float fovyDeg = 45.0f;
 	float zNear = 0.1f; //dont use val. 0
 	float zFar = 100.0f;
 
@@ -21,8 +21,6 @@ private:
 
 	int width = 800;
 	int height = 600;
-
-	//vector<IObserver*> observers;
 
 public:
 	//vars for mouse cam. movements
@@ -41,11 +39,8 @@ public:
 	void move(int key);
 	void mouseMovement(double x, double y);
 
-	//void registerObserver(IObserver* sp);
-	//void unregisterObserver(IObserver* sp);
 	void onChange(); //notify all when state changes
 
 	//update origin. viewport
 	void setViewportSize(int w, int h);
 };
-

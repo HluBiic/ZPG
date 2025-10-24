@@ -178,7 +178,8 @@
     <None Include="blinn_fragment_shader.glsl" />
     <None Include="constant_fragment_shader.glsl" />
     <None Include="lambert_fragment_shader.glsl" />
-    <None Include="phong_fragment_shader.glsl" />
+    <None Include="phong_correct_fragment_shader.glsl" />
+    <None Include="phong_incorrect_fragment_shader.glsl" />
     <None Include="vertex_shader.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

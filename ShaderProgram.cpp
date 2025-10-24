@@ -82,7 +82,37 @@ void ShaderProgram::setUniform(const char* name, const glm::vec3& camPosVector) 
     glUniform3fv(idModelTransform, 1, glm::value_ptr(camPosVector));
 }
 
+void ShaderProgram::setUniform(const char* name, const glm::vec4& vec) {
+    GLint idModelTransform = glGetUniformLocation(this->id, name);
+    if (idModelTransform == -1) {
+        printf("%s not found!\n", name);
+        //exit(1);
+    }
+    glUniform4fv(idModelTransform, 1, glm::value_ptr(vec));
+}
+
+void ShaderProgram::setUniform(const char* name, int value) {
+    GLint idModelTransform = glGetUniformLocation(this->id, name);
+    if (idModelTransform == -1) {
+        printf("%s not found!\n", name);
+        //exit(1);
+    }
+    glUniform1i(idModelTransform, value); //for passing a single int
+}
+
+void ShaderProgram::setUniform(const char* name, float value) {
+    GLint idModelTransform = glGetUniformLocation(this->id, name);
+    if (idModelTransform == -1) {
+        printf("%s not found!\n", name);
+        //exit(1);
+    }
+    glUniform1f(idModelTransform, value); //for passing a float
+}
+
 void ShaderProgram::update(ObserverSubject* s) {
+    setUniform("objectColor", glm::vec4(0.385, 0.647, 0.812, 1.0));
+    setUniform("shinines", float(32.0)); //change to 1.0 to visually test that the "holo" effect is/isnt present
+
     if (auto* camera = dynamic_cast<Camera*>(s)) {
         this->useShaderProgram();
         setUniform("viewMatrix", camera->getViewMatrix());
@@ -92,18 +122,22 @@ void ShaderProgram::update(ObserverSubject* s) {
 
     if (auto* light = dynamic_cast<Light*>(s)) {
         this->useShaderProgram();
-        setUniform("lightPosition", light->getLightPos());
+
+        string lightPosString = "lights[" + to_string(this->processedLightIndex) + "].position";
+        string diffColString = "lights[" + to_string(this->processedLightIndex) + "].diffuseColor";
+        string specColString = "lights[" + to_string(this->processedLightIndex) + "].specularColor";
+        string attConstString = "lights[" + to_string(this->processedLightIndex) + "].attenConst";
+        string attLinearlString = "lights[" + to_string(this->processedLightIndex) + "].attenLinear";
+        string attQuadString = "lights[" + to_string(this->processedLightIndex) + "].attenQuadric";
+
+        setUniform(lightPosString.c_str(), glm::vec4(light->lightPosition, 1.0)); //get the pos from light in scene
+        setUniform(diffColString.c_str(), glm::vec4(light->diffuseColor));
+        setUniform(specColString.c_str(), glm::vec4(light->specularColor));
+        setUniform(attConstString.c_str(), light->attenConst);
+        setUniform(attLinearlString.c_str(), light->attenLinear);
+        setUniform(attQuadString.c_str(), light->attenQuadric);
+
+        this->processedLightIndex++;
+        setUniform("numberOfLights", 2);        
     }
 }
-
-/*void ShaderProgram::camUpdated(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, glm::vec3 camPosition) {
-    this->useShaderProgram(); //otherwise only 1 shader was shown even when multiple were used
-    setUniform("viewMatrix", viewMatrix);
-    setUniform("projectMatrix", projectionMatrix);
-    setUniform("camPosition", camPosition);...camera.eye
-}
-
-void ShaderProgram::lightUpdate(glm::vec3 lightPos) {
-    this->useShaderProgram();
-    setUniform("lightPosition", lightPos);
-}*/

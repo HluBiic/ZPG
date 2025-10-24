@@ -1,23 +1,5 @@
 ﻿#include "DrawableObject.h"
 
-
-//simple square for testign purposes with given shaders and given transfomrations
-/*DrawableObject::DrawableObject() {
-	this->shaderProgram = new ShaderProgram(vertex_shader_uniform, fragment_shader_detail);
-	this->model = new Model(triangle, size(triangle), 6);
-	
-	glm::mat4 M = glm::mat4(1.0f);
-
-	TransformGroup* tg = new TransformGroup();
-	
-	tg->add(new Scale(glm::vec3(0.3f)));
-	//tg->add(new Rotation(15.0f, glm::vec3(0.0f, 0.0f, 1.0f)));
-	tg->add(new Spin(180.0f, glm::vec3(0.0f, 0.0f, 1.0f))); // spinning 180 degrees per second
-	tg->add(new Translation(glm::vec3(0.0f, -0.5f, 0.0f)));
-	
-	this->transformation = tg;
-}*/
-
 DrawableObject::DrawableObject(ShaderProgram* sp, Model* m, Transformation* t) {
 	this->shaderProgram = sp;
 	this->model = m;
@@ -41,4 +23,8 @@ void DrawableObject::draw() {
 	this->setShader();
 	this->setTransformation();
 	this->setModel();
+}
+
+void DrawableObject::resetLightCounter() {
+	this->shaderProgram->processedLightIndex = 0;
 }

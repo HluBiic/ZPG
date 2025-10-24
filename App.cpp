@@ -66,12 +66,13 @@ void App::createScenes() {
 	this->scenes.emplace_back(Scene());
 	this->scenes.emplace_back(Scene());
 	this->scenes.emplace_back(Scene());
+	this->scenes.emplace_back(Scene());
 
 	this->scenes.at(0).basicScene();
 	this->scenes.at(1).symetricalSpheresScene();
 	//this->scenes.at(1).allLightShadersTestScene();
-	//this->scenes.at(2).forestScene();
 	this->scenes.at(2).galaxy();
+	this->scenes.at(3).forestScene();
 }
 
 void App::run() {
@@ -88,7 +89,7 @@ void App::run() {
 		// update other events like input handling
 		glfwPollEvents(); // For procesing any pending input events (nmouse, keyboard, window)
 
-		// put the stuff we’ve been drawing onto the display
+		// put the stuff weve been drawing onto the display
 		glfwSwapBuffers(this->window); // swap buffer...double buffering for rendering
 	}
 	glfwDestroyWindow(this->window); // Destroy wind. before exiting program
@@ -126,6 +127,9 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
 				break;
 			case GLFW_KEY_KP_3:
 				app->currentScene = 2;
+				break;
+			case GLFW_KEY_KP_4:
+				app->currentScene = 3;
 				break;
 			case GLFW_KEY_W:
 			case GLFW_KEY_A:

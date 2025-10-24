@@ -1,22 +1,14 @@
 #include "Light.h"
 
-Light::Light(glm::vec3 position) {
-	this->pointLightPosition = position;
+Light::Light(glm::vec3 position, glm::vec4 diffCol, glm::vec4 specCol, float attenConst, float attenLinear, float attenQuadric) {
+	this->lightPosition = position;
+	this->diffuseColor = diffCol;
+	this->specularColor = specCol;
+	this->attenConst = attenConst;
+	this->attenLinear = attenLinear;
+	this->attenQuadric = attenQuadric;
 }
-
-/*void Light::registerObserver(IObserver* sp) {
-	this->observers.push_back(sp);
-}
-
-void Light::unregisterObserver(IObserver* sp) {
-	this->observers.erase(remove(observers.begin(), observers.end(), sp), observers.end()); //removing by val. of o
-}*/
 
 void Light::onChange() {
 	notifyObservers();
 }
-
-glm::vec3 Light::getLightPos() {
-	return this->pointLightPosition;
-}
-

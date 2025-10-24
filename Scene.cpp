@@ -2,15 +2,47 @@
 
 Scene::Scene() {
 	this->camera = new Camera();
-	this->lights.push_back(new Light(glm::vec3(0.0, 0.0, 0.0)));
+
+	//blueish light
+	this->lights.push_back(new Light(
+		glm::vec3(0.0, 0.0, 0.0), //pos
+		glm::vec4(0.0, 0.0, 1.0, 1.0), //diff col
+		glm::vec4(0.729, 0.729, 0.949, 1.0), //spec col
+		1.0f, 0.0f, 0.0f)); //light attenuation
+
+	//redish light
+	this->lights.push_back(new Light(
+		glm::vec3(10.0, 10.0, 0.0),
+		glm::vec4(1.0, 0.0, 0.0, 1.0),
+		glm::vec4(0.929, 0.729, 0.729, 1.0),
+		1.0f, 0.0f, 0.0f));
+
+	//main light for forest scene...moon high above teh scene
+	this->lights.push_back(new Light(
+		glm::vec3(0.0f, 50.0f, 0.0f),
+		glm::vec4(0.8f, 0.8f, 1.0f, 1.0f),
+		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
+		1.0f, 0.0005f, 0.0001f));
+
+	//firefflies for the forest scene...scatterred arround
+	for (int i = 0; i < 5; i++) {
+		float x = 0.5f + (float)(rand()) / RAND_MAX * (20.0f - 0.5f);
+		float y = 1.0f;
+		float z = 0.5f + (float)(rand()) / RAND_MAX * (20.0f - 0.5f);
+		this->lights.push_back(new Light(
+			glm::vec3(x, y, z),
+			glm::vec4(0.5f, 0.8f, 0.2f, 1.0f),
+			glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
+			1.0f, 0.09f, 0.032f));
+	}
 }
 
 //LAB 05 - TASK 3a - simple static triangle
 void Scene::basicScene() {
 	Shader* vertexShader = new Shader();
-	vertexShader->createShaderFromFile(GL_VERTEX_SHADER, "vertex_shader.glsl");
+	vertexShader->createShaderFromFile(GL_VERTEX_SHADER, VERTEX_SHADER);
 	Shader* fragmentShader = new Shader();
-	fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, "constant_fragment_shader.glsl");
+	fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, CONSTANT_FRAGMENT_SHADER);
 	ShaderProgram* sp = new ShaderProgram(vertexShader, fragmentShader);
 
 	TransformGroup* tg = new TransformGroup();
@@ -28,13 +60,16 @@ void Scene::basicScene() {
 //LAB 05 - TASK 3b - 4x spheres symetricaly placed along axes
 void Scene::symetricalSpheresScene() {
 	Shader* vertexShader = new Shader();
-	vertexShader->createShaderFromFile(GL_VERTEX_SHADER, "vertex_shader.glsl");
+	vertexShader->createShaderFromFile(GL_VERTEX_SHADER, VERTEX_SHADER);
 	Shader* fragmentShader = new Shader();
-	fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, "phong_fragment_shader.glsl");
+	fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, PHONG_CORRECT_FRAGMENT_SHADER);
 	ShaderProgram* sp = new ShaderProgram(vertexShader, fragmentShader);
 
 	this->camera->registerObserver(sp);
-	this->lights.at(0)->registerObserver(sp);
+	//this->lights.at(0)->registerObserver(sp);
+	for (auto l : lights) {
+		l->registerObserver(sp);
+	}
 
 	Model* m = new Model(sphere, size(sphere), 6);
 
@@ -63,22 +98,22 @@ void Scene::symetricalSpheresScene() {
 // LAB 05 - TASK 02 - 4 spheres with 4 basic lightning models
 void Scene::allLightShadersTestScene() {
 	Shader* vertexShader = new Shader();
-	vertexShader->createShaderFromFile(GL_VERTEX_SHADER, "vertex_shader.glsl");
+	vertexShader->createShaderFromFile(GL_VERTEX_SHADER, VERTEX_SHADER);
 
 	Shader* fragmentShader = new Shader();
-	fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, "constant_fragment_shader.glsl");
+	fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, CONSTANT_FRAGMENT_SHADER);
 	ShaderProgram* sp = new ShaderProgram(vertexShader, fragmentShader);
 
 	Shader* fragmentShader2 = new Shader();
-	fragmentShader2->createShaderFromFile(GL_FRAGMENT_SHADER, "lambert_fragment_shader.glsl");
+	fragmentShader2->createShaderFromFile(GL_FRAGMENT_SHADER, LAMBERT_FRAGMENT_SHADER);
 	ShaderProgram* sp2 = new ShaderProgram(vertexShader, fragmentShader2);
 
 	Shader* fragmentShader3 = new Shader();
-	fragmentShader3->createShaderFromFile(GL_FRAGMENT_SHADER, "phong_fragment_shader.glsl");
+	fragmentShader3->createShaderFromFile(GL_FRAGMENT_SHADER, PHONG_CORRECT_FRAGMENT_SHADER);
 	ShaderProgram* sp3 = new ShaderProgram(vertexShader, fragmentShader3);
 
 	Shader* fragmentShader4 = new Shader();
-	fragmentShader4->createShaderFromFile(GL_FRAGMENT_SHADER, "blinn_fragment_shader.glsl");
+	fragmentShader4->createShaderFromFile(GL_FRAGMENT_SHADER, BLINN_FRAGMENT_SHADER);
 	ShaderProgram* sp4 = new ShaderProgram(vertexShader, fragmentShader4);
 
 	this->camera->registerObserver(sp);
@@ -118,14 +153,19 @@ void Scene::allLightShadersTestScene() {
 //LAB 05 - TASK 3c - forest with bushes and ground
 void Scene::forestScene() {
 	Shader* vertexShader = new Shader();
-	vertexShader->createShaderFromFile(GL_VERTEX_SHADER, "vertex_shader.glsl");
+	vertexShader->createShaderFromFile(GL_VERTEX_SHADER, VERTEX_SHADER);
 	Shader* fragmentShader = new Shader();
-	fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, "phong_fragment_shader.glsl");
+	fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, PHONG_CORRECT_FRAGMENT_SHADER);
 	ShaderProgram* sp = new ShaderProgram(vertexShader, fragmentShader);
 
 	this->camera->registerObserver(sp);
 
-	this->lights.at(0)->registerObserver(sp);
+	this->lights.at(2)->registerObserver(sp);
+	this->lights.at(3)->registerObserver(sp);
+	this->lights.at(4)->registerObserver(sp);
+	this->lights.at(5)->registerObserver(sp);
+	this->lights.at(6)->registerObserver(sp);
+	this->lights.at(7)->registerObserver(sp);
 
 	Model* treeModel = new Model(tree, size(tree), 6);
 	Model* bushModel = new Model(bushes, size(bushes), 6);
@@ -175,9 +215,9 @@ void Scene::forestScene() {
 //LAB 05 - TASK 3d - solar system scene prep
 void Scene::galaxy() {
     Shader* vertexShader = new Shader();
-    vertexShader->createShaderFromFile(GL_VERTEX_SHADER, "vertex_shader.glsl");
+    vertexShader->createShaderFromFile(GL_VERTEX_SHADER, VERTEX_SHADER);
     Shader* fragmentShader = new Shader();
-    fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, "blinn_fragment_shader.glsl");
+    fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, PHONG_CORRECT_FRAGMENT_SHADER);
     ShaderProgram* sp = new ShaderProgram(vertexShader, fragmentShader);
 
     this->camera->registerObserver(sp);
@@ -225,11 +265,17 @@ void Scene::addObject(DrawableObject* drawObj) {
 }
 
 void Scene::draw() {
-	this->lights.at(0)->onChange();
+
+	//this->lights.at(0)->onChange();..onlyu 1 light
+	for (auto l : this->lights) {
+		l->onChange();
+	}
+
 	this->camera->onChange();
 
 	// draw objects
 	for (auto o : this->objects) {
+		o->resetLightCounter();
 		o->draw();
 	}
 }

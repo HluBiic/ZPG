@@ -15,6 +15,7 @@ void main(void) {
 
 	//multiplies each verice (ON GPU) with the transf. matrix
 	worldPosition = modelMatrix * vec4(vp, 1.0f);//transfroms vertex to world coordinates
-	worldNormal = vn; //TODO in lecture 06
-	//worldNormal = mat3(transpose(inverse(modelMatrix))) * vn;
+	//worldNormal = vn; //carefull this is incorrect...TODO after lecture 06
+	//corrected normal transformation from local to global sys...L06
+	worldNormal = normalize(transpose(inverse(mat3(modelMatrix))) * vn);
 }

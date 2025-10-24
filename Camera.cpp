@@ -20,17 +20,11 @@ glm::mat4 Camera::getViewMatrix() {
 }
 
 glm::mat4 Camera::getProjectionMatrix() {
-	//first param as radiants otherwise fish eye like camera
+	this->fovyDeg = 45.0f;
+	//first param as radiants otherwise fish eye like camera!!
 	return glm::perspective(glm::radians(this->fovyDeg), (float)this->width / (float)this->height, this->zNear, this->zFar);
+	//return glm::perspective(this->fovyDeg, (float)this->width / (float)this->height, this->zNear, this->zFar);
 }
-
-/*void Camera::registerObserver(IObserver* sp) {
-	this->observers.push_back(sp);
-}
-
-void Camera::unregisterObserver(IObserver* sp) {
-	this->observers.erase(remove(observers.begin(), observers.end(), sp), observers.end()); //removing by val. of sp
-}*/
 
 void Camera::onChange() {
 	notifyObservers();

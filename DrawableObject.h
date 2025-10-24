@@ -22,4 +22,6 @@ public:
 	void setTransformation();
 
 	void draw();
+
+	void resetLightCounter();
 };

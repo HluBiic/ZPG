@@ -142,7 +142,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="phong_fragment_shader.glsl">
+    <None Include="phong_incorrect_fragment_shader.glsl">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="vertex_shader.glsl">
@@ -155,6 +155,9 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="blinn_fragment_shader.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="phong_correct_fragment_shader.glsl">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
