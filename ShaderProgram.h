@@ -53,6 +53,8 @@ class ShaderProgram : public IObserver {
 		*/
 		void useShaderProgram();
 
+		void unuseShaderProgram();
+
 		void setUniform(const char* name, const glm::mat4& matrix);
 		void setUniform(const glm::mat4& matrix);
 		void setUniform(const char* name, const glm::vec3& vec);

@@ -13,7 +13,7 @@ int main(void) {
 
 	a->initialization();
 
-   a->createScenes();
+	a->createScenes();
 
-   a->run();
+	a->run();
 }

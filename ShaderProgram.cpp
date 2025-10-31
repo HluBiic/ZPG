@@ -60,7 +60,12 @@ void ShaderProgram::useShaderProgram() {
     glUseProgram(this->id);
 }
 
+void ShaderProgram::unuseShaderProgram() {
+    glUseProgram(0);
+}
+
 void ShaderProgram::setUniform(const char* name, const glm::mat4& matrix) {
+    this->useShaderProgram();
     GLint idModelTransform = glGetUniformLocation(this->id, name);
     if (idModelTransform == -1) {
         printf("%s not found!\n", name);
@@ -74,6 +79,7 @@ void ShaderProgram::setUniform(const glm::mat4& matrix) {
 }
 
 void ShaderProgram::setUniform(const char* name, const glm::vec3& camPosVector) { //for phong lighting 
+    this->useShaderProgram();
     GLint idModelTransform = glGetUniformLocation(this->id, name);
     if (idModelTransform == -1) {
         printf("%s not found!\n", name);
@@ -83,6 +89,7 @@ void ShaderProgram::setUniform(const char* name, const glm::vec3& camPosVector) 
 }
 
 void ShaderProgram::setUniform(const char* name, const glm::vec4& vec) {
+    this->useShaderProgram();
     GLint idModelTransform = glGetUniformLocation(this->id, name);
     if (idModelTransform == -1) {
         printf("%s not found!\n", name);
@@ -92,6 +99,7 @@ void ShaderProgram::setUniform(const char* name, const glm::vec4& vec) {
 }
 
 void ShaderProgram::setUniform(const char* name, int value) {
+    this->useShaderProgram();
     GLint idModelTransform = glGetUniformLocation(this->id, name);
     if (idModelTransform == -1) {
         printf("%s not found!\n", name);
@@ -101,6 +109,7 @@ void ShaderProgram::setUniform(const char* name, int value) {
 }
 
 void ShaderProgram::setUniform(const char* name, float value) {
+    this->useShaderProgram();
     GLint idModelTransform = glGetUniformLocation(this->id, name);
     if (idModelTransform == -1) {
         printf("%s not found!\n", name);
@@ -110,18 +119,21 @@ void ShaderProgram::setUniform(const char* name, float value) {
 }
 
 void ShaderProgram::update(ObserverSubject* s) {
-    setUniform("objectColor", glm::vec4(0.385, 0.647, 0.812, 1.0));
+    //setUniform("objectColor", glm::vec4(0.385, 0.647, 0.812, 1.0));
     setUniform("shinines", float(32.0)); //change to 1.0 to visually test that the "holo" effect is/isnt present
 
     if (auto* camera = dynamic_cast<Camera*>(s)) {
-        this->useShaderProgram();
+        //this->useShaderProgram(); //
+        this->processedLightIndex = 0;
         setUniform("viewMatrix", camera->getViewMatrix());
         setUniform("projectMatrix", camera->getProjectionMatrix());
         setUniform("camPosition", camera->eye);
     }
 
     if (auto* light = dynamic_cast<Light*>(s)) {
-        this->useShaderProgram();
+        //this->useShaderProgram();
+        string lightTypeString = "lights[" + to_string(this->processedLightIndex) + "].type";
+        setUniform(lightTypeString.c_str(), light->type);
 
         string lightPosString = "lights[" + to_string(this->processedLightIndex) + "].position";
         string diffColString = "lights[" + to_string(this->processedLightIndex) + "].diffuseColor";
@@ -129,15 +141,39 @@ void ShaderProgram::update(ObserverSubject* s) {
         string attConstString = "lights[" + to_string(this->processedLightIndex) + "].attenConst";
         string attLinearlString = "lights[" + to_string(this->processedLightIndex) + "].attenLinear";
         string attQuadString = "lights[" + to_string(this->processedLightIndex) + "].attenQuadric";
+        string lightDirDirectionalString = "lights[" + to_string(this->processedLightIndex) + "].lightDirDirectionalLight";
+        string cutOffString = "lights[" + to_string(this->processedLightIndex) + "].cutOff";
+        string outerCutOffString = "lights[" + to_string(this->processedLightIndex) + "].outerCutOff";
 
-        setUniform(lightPosString.c_str(), glm::vec4(light->lightPosition, 1.0)); //get the pos from light in scene
+
+        switch (light->type) {
+            case LightType::POINT: //pos,attConst,attLinear,attQuad
+                setUniform(lightPosString.c_str(), glm::vec4(light->lightPosition, 1.0)); //get the pos from light in scene
+                setUniform(attConstString.c_str(), light->attenConst);
+                setUniform(attLinearlString.c_str(), light->attenLinear);
+                setUniform(attQuadString.c_str(), light->attenQuadric);
+                break;
+            case LightType::AMBIENT: //only diffuse + spec col, no pos or attenuation
+                break;
+            case LightType::DIRECTIONAL:
+                setUniform(lightDirDirectionalString.c_str(), light->lightDirecton);
+                break;
+            case LightType::SPOT:
+                //setUniform(lightPosString.c_str(), glm::vec4(light->lightPosition, 1.0)); //get the pos from light in scene
+                //setUniform(attConstString.c_str(), light->attenConst);
+                //setUniform(attLinearlString.c_str(), light->attenLinear);
+               // setUniform(attQuadString.c_str(), light->attenQuadric);
+               // setUniform(lightDirDirectionalString.c_str(), light->lightDirecton);
+                //setUniform(cutOffString.c_str(), light->cutOff);
+                //setUniform(outerCutOffString.c_str(), light->outerCutOff);
+                break;
+            //no need for default bcs light is defaultry already set to POINT
+        }
+
         setUniform(diffColString.c_str(), glm::vec4(light->diffuseColor));
         setUniform(specColString.c_str(), glm::vec4(light->specularColor));
-        setUniform(attConstString.c_str(), light->attenConst);
-        setUniform(attLinearlString.c_str(), light->attenLinear);
-        setUniform(attQuadString.c_str(), light->attenQuadric);
 
         this->processedLightIndex++;
-        setUniform("numberOfLights", 2);        
+        setUniform("numberOfLights", this->processedLightIndex);        
     }
 }

@@ -1,8 +1,6 @@
 #pragma once
 #include "DrawableObject.h"
 #include "TransformGroup.h"
-#include "Scale.h"
-#include "Spin.h"
 #include "Translation.h"
 #include "Camera.h"
 #include "Light.h"
@@ -23,6 +21,7 @@ public:
 	vector<Light*> lights;
 
 	Scene();
+	void tryoutScene();
 	void basicScene();
 	void symetricalSpheresScene();
 	void allLightShadersTestScene();

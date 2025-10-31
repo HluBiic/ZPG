@@ -9,7 +9,7 @@
 #include "Spin.h"
 
 class DrawableObject {
-private:
+protected:
 	ShaderProgram* shaderProgram;
 	Model* model;
 	Transformation* transformation;
@@ -18,6 +18,7 @@ public:
 	DrawableObject(ShaderProgram* sp, Model* m, Transformation* t);
 
 	void setShader();
+	void unsetShader();
 	void setModel();
 	void setTransformation();
 

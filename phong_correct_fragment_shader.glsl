@@ -2,11 +2,14 @@
 //light attenuation only in this shader
 #version 330
 
-#define MAX_LIGHTS 10
+#define MAX_LIGHTS 20
 
 struct light {
+    int type;
 	vec4 position; vec4 diffuseColor; vec4 specularColor;
 	float attenConst; float attenLinear; float attenQuadric;
+	vec3 lightDirDirectionalLight;
+	float cutOff; float outerCutOff; //spotlight borders
 };
 
 in vec4 worldPosition;
@@ -41,15 +44,34 @@ void main () {
 
 
 	for (int index = 0; index < numberOfLights; index++) { // for all light sources
-		vec3 lightPos = lights[index].position.xyz / lights[index].position.w; //careful 0 division may occur !!
-		vec3 lightDir = normalize(lightPos - (worldPosition.xyz / worldPosition.w)); //vector from surface point to the light source
-		//normalize(lightPosition - worldPosition.xyz) - is wrond...we have to divide the .xyz with .w and not just throw it away!!
+
+		if (lights[index].type == 1) { //AMBIENT LIGHT
+			ambient += lights[index].diffuseColor * objectColor;
+			continue;
+		}
+
+		vec3 lightDir;
+		float att = 1.0;
+		float intensity = 1.0; //spotlihgh
+
+		if (lights[index].type == 0) { //POINT LIGHT
+			vec3 lightPos = lights[index].position.xyz / lights[index].position.w; //careful 0 division may occur !!
+			lightDir = normalize(lightPos - (worldPosition.xyz / worldPosition.w)); //vector from surface point to the light source
+			//normalize(lightPosition - worldPosition.xyz) - is wrond...we have to divide the .xyz with .w and not just throw it away!!
+
+			//light attenuation
+			float dist = length(lightPos - (worldPosition.xyz / worldPosition.w)); //dist. from light to fragment poitn
+			att = attenuation(dist, lights[index].attenConst, lights[index].attenLinear, lights[index].attenQuadric);
 
 
-		//light attenuation
-		float dist = length(lightPos - (worldPosition.xyz / worldPosition.w)); //dist. from light to fragment poitn
-		float att = attenuation(dist, lights[index].attenConst, lights[index].attenLinear, lights[index].attenQuadric);
+		} else if (lights[index].type == 2) { //DIRECTIONAL LIGHT
+			lightDir = normalize(-(lights[index].lightDirDirectionalLight.xyz)); //vect from light to survace point
+			att = 1.0; //fixed in directional light
 
+
+		} else if (lights[index].type == 3) { //SPOTLIGHT
+
+		}
 
 		//diffuse part
 		//I = max ( dot ( lightVector , worldNor ) , 0.0);//Lambert Shader (L05 - page 11)
@@ -71,6 +93,5 @@ void main () {
 			sumSpecular += specular * att;
 		}
 	}
-	//fragColor = ambient + diffuse + specular;
 	fragColor = ambient + sumDiffuse + sumSpecular;
 }

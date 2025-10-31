@@ -3,38 +3,81 @@
 Scene::Scene() {
 	this->camera = new Camera();
 
-	//blueish light
+	//blueish light...[0]
 	this->lights.push_back(new Light(
-		glm::vec3(0.0, 0.0, 0.0), //pos
+		glm::vec3(50.0, 50.0, 0.0), //pos
 		glm::vec4(0.0, 0.0, 1.0, 1.0), //diff col
 		glm::vec4(0.729, 0.729, 0.949, 1.0), //spec col
 		1.0f, 0.0f, 0.0f)); //light attenuation
 
-	//redish light
+	//redish light...[1]
 	this->lights.push_back(new Light(
 		glm::vec3(10.0, 10.0, 0.0),
 		glm::vec4(1.0, 0.0, 0.0, 1.0),
 		glm::vec4(0.929, 0.729, 0.729, 1.0),
 		1.0f, 0.0f, 0.0f));
 
-	//main light for forest scene...moon high above teh scene
+	//main light for forest scene...moon high above teh scene ...[2]
 	this->lights.push_back(new Light(
-		glm::vec3(0.0f, 50.0f, 0.0f),
+		glm::vec3(20.0f, 20.0f, 0.0f),
 		glm::vec4(0.8f, 0.8f, 1.0f, 1.0f),
 		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
-		1.0f, 0.0005f, 0.0001f));
+		1.0f, 0.0f, 0.01f));
 
-	//firefflies for the forest scene...scatterred arround
-	for (int i = 0; i < 5; i++) {
-		float x = 0.5f + (float)(rand()) / RAND_MAX * (20.0f - 0.5f);
-		float y = 1.0f;
-		float z = 0.5f + (float)(rand()) / RAND_MAX * (20.0f - 0.5f);
+	//firefflies for the forest scene...scatterred arround the forest...[3-12]
+	for (int i = 0; i < 10; i++) {
+		float x = 0.5f + (float)(rand()) / RAND_MAX * (5.0f - 0.2f);
+		float y = 0.08f;
+		float z = 0.5f + (float)(rand()) / RAND_MAX * (5.0f - 0.2f);
 		this->lights.push_back(new Light(
 			glm::vec3(x, y, z),
 			glm::vec4(0.5f, 0.8f, 0.2f, 1.0f),
-			glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
-			1.0f, 0.09f, 0.032f));
+			glm::vec4(0.5f, 0.8f, 0.2f, 1.0f),
+			//1.0f, 0.09f, 0.032f)); extremely much
+			//1.0f, 0.9f, 3.8f)); //best so far
+			1.0f, 0.0f, 50.0f));//with desmos...best
+			//1.0f, 0.35f, 0.44f));toomuch
 	}
+
+	//lights for tryout scene...just testing their functionality
+	this->lights.push_back(new Light(glm::vec4(0.0, 1.0, 0.0, 1.0)));// ...[13]...AMBIENT
+	this->lights.push_back(new Light(
+		glm::vec3(-1.0f, -1.0f, -0.5f), 
+		glm::vec4(0.0, 0.0, 1.0, 1.0), 
+		glm::vec4(0.729, 0.729, 0.949, 1.0)));// ...[14]...DIRECTIONAL
+
+
+	float innerCutOff = glm::cos(glm::radians(9.0f));
+	float outerCutOff = glm::cos(glm::radians(10.0f));
+	this->lights.push_back(new Light(// ...[15]...SPOTLIGHT...DOESNT WORK
+		glm::vec3(0.0f, 2.0f, 2.0f),
+		glm::vec3(0.0f, -1.0f, -1.0f),
+		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
+		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
+		innerCutOff, outerCutOff,
+		1.0f, 0.09f, 0.032f
+	));
+}
+
+void Scene::tryoutScene() {
+	Shader* vertexShader = new Shader();
+	vertexShader->createShaderFromFile(GL_VERTEX_SHADER, VERTEX_SHADER);
+	Shader* fragmentShader = new Shader();
+	fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, PHONG_CORRECT_FRAGMENT_SHADER);
+	ShaderProgram* sp = new ShaderProgram(vertexShader, fragmentShader);
+
+	sp->setUniform("objectColor", glm::vec4(0.385, 0.647, 0.812, 1.0));
+
+	this->camera->registerObserver(sp);
+	this->lights.at(14)->registerObserver(sp);
+	//this->flashlight->registerObserver(sp);
+
+	Model* m = new Model(sphere, size(sphere), 6);
+
+	TransformGroup* tg = new TransformGroup();
+	tg->add(new Scale(glm::vec3(0.2f)));
+
+	this->objects.push_back(new DrawableObject(sp, m, tg));
 }
 
 //LAB 05 - TASK 3a - simple static triangle
@@ -42,19 +85,35 @@ void Scene::basicScene() {
 	Shader* vertexShader = new Shader();
 	vertexShader->createShaderFromFile(GL_VERTEX_SHADER, VERTEX_SHADER);
 	Shader* fragmentShader = new Shader();
-	fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, CONSTANT_FRAGMENT_SHADER);
+	//fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, CONSTANT_FRAGMENT_SHADER);...for basic triangle
+	fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, PHONG_CORRECT_FRAGMENT_SHADER);
 	ShaderProgram* sp = new ShaderProgram(vertexShader, fragmentShader);
+	sp->setUniform("objectColor", glm::vec4(0.385, 0.647, 0.812, 1.0));
 
-	TransformGroup* tg = new TransformGroup();
-	tg->add(new Scale(glm::vec3(0.3f)));
-	tg->add(new Rotation(90.0f, glm::vec3(0.0f, 1.0f, 0.0f)));
+	TransformGroup* tgM = new TransformGroup();
+	tgM->add(new Scale(glm::vec3(0.2f)));
+
+	TransformGroup* tgZPG = new TransformGroup();
+	tgZPG->add(new Translation(glm::vec3(0.0f, -4.0f, -1.0f)));
+	tgZPG->add(new Scale(glm::vec3(0.2f)));
+	tgZPG->add(new Rotation(45.0f, glm::vec3(1.0, 1.0, 0.0)));
+
+	TransformGroup* tgLogin = new TransformGroup();
+	tgLogin->add(new Translation(glm::vec3(0.0f, -4.0f, 1.0f)));
+	tgLogin->add(new Scale(glm::vec3(0.2f)));
+	tgLogin->add(new Rotation(90.0f, glm::vec3(0.0, 1.0, 1.0)));
 
 	this->camera->registerObserver(sp);
 	this->lights.at(0)->registerObserver(sp);
 
-	Model* m = new Model(triangle, size(triangle), 6);
-	
-	this->objects.push_back(new DrawableObject(sp, m, tg));
+	//Model* m = new Model(triangle, size(triangle), 6);...for basic triangle
+	Model* m = new Model("house.obj");
+	Model* m2 = new Model("Login.obj");
+	Model* m3 = new Model("ZPG Title.obj");
+
+	this->objects.push_back(new DrawableObject(sp, m, tgM));
+	this->objects.push_back(new DrawableObject(sp, m3, tgZPG));
+	this->objects.push_back(new DrawableObject(sp, m2, tgLogin));
 }
 
 //LAB 05 - TASK 3b - 4x spheres symetricaly placed along axes
@@ -64,6 +123,7 @@ void Scene::symetricalSpheresScene() {
 	Shader* fragmentShader = new Shader();
 	fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, PHONG_CORRECT_FRAGMENT_SHADER);
 	ShaderProgram* sp = new ShaderProgram(vertexShader, fragmentShader);
+	sp->setUniform("objectColor", glm::vec4(0.385, 0.647, 0.812, 1.0));
 
 	this->camera->registerObserver(sp);
 	//this->lights.at(0)->registerObserver(sp);
@@ -152,24 +212,25 @@ void Scene::allLightShadersTestScene() {
 
 //LAB 05 - TASK 3c - forest with bushes and ground
 void Scene::forestScene() {
+	fflush(stdout);
 	Shader* vertexShader = new Shader();
 	vertexShader->createShaderFromFile(GL_VERTEX_SHADER, VERTEX_SHADER);
 	Shader* fragmentShader = new Shader();
 	fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, PHONG_CORRECT_FRAGMENT_SHADER);
 	ShaderProgram* sp = new ShaderProgram(vertexShader, fragmentShader);
+	sp->setUniform("objectColor", glm::vec4(0.385, 0.647, 0.812, 1.0));
 
 	this->camera->registerObserver(sp);
 
-	this->lights.at(2)->registerObserver(sp);
-	this->lights.at(3)->registerObserver(sp);
-	this->lights.at(4)->registerObserver(sp);
-	this->lights.at(5)->registerObserver(sp);
-	this->lights.at(6)->registerObserver(sp);
-	this->lights.at(7)->registerObserver(sp);
+	this->lights.at(2)->registerObserver(sp); //moon/sun
+	for (int i = 3; i < 13; i++) { //fireflies
+		this->lights.at(i)->registerObserver(sp);
+	}
 
 	Model* treeModel = new Model(tree, size(tree), 6);
 	Model* bushModel = new Model(bushes, size(bushes), 6);
 	Model* ground = new Model(plain, size(plain), 6);
+	Model* firefly = new Model(sphere, size(sphere), 6);
 
 	float xTreeOffset = 0.0f;
 	float yTreeBushOffset = 0.0f;//same for all trees + bushes
@@ -205,6 +266,31 @@ void Scene::forestScene() {
 			)
 		);
 	}
+
+	//sphere for fireflies...constant shader of white color
+	Shader* vertexShaderFirefly = new Shader();
+	vertexShaderFirefly->createShaderFromFile(GL_VERTEX_SHADER, VERTEX_SHADER);
+	Shader* fragmentShaderFirefly = new Shader();
+	fragmentShaderFirefly->createShaderFromFile(GL_FRAGMENT_SHADER, CONSTANT_FRAGMENT_SHADER);
+	ShaderProgram* spFirefly = new ShaderProgram(vertexShaderFirefly, fragmentShaderFirefly);
+
+	this->camera->registerObserver(spFirefly);
+	spFirefly->setUniform("objectColor", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+
+	//glm::vec3 maxDist(0.2f, 0.2f, 0.2f);
+
+	for (int i = 3; i < 13; i++) {
+		//PointLight* pl = dynamic_cast<PointLight*>(this->lights.at(i));
+
+		TransformGroup* tgFirefly = new TransformGroup();
+		tgFirefly->add(new Scale(glm::vec3(0.008f))); // make it bigger
+		//tgFirefly->add(new Translation(pl->lightPosition));
+		tgFirefly->add(new Translation(this->lights.at(i)->lightPosition));
+		//tgFirefly->add(new RandTranslateDynamic(this->lights.at(i)->lightPosition, maxDist));
+
+		this->objects.push_back(new DrawableObject(spFirefly, firefly, tgFirefly));
+	}
+
 	//ground
 	TransformGroup* tgGround = new TransformGroup();
 	tgGround->add(new Translation(glm::vec3(0.8f, 0.0f, 0.8f)));
@@ -219,6 +305,7 @@ void Scene::galaxy() {
     Shader* fragmentShader = new Shader();
     fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, PHONG_CORRECT_FRAGMENT_SHADER);
     ShaderProgram* sp = new ShaderProgram(vertexShader, fragmentShader);
+	sp->setUniform("objectColor", glm::vec4(0.385, 0.647, 0.812, 1.0));
 
     this->camera->registerObserver(sp);
     this->lights.at(0)->registerObserver(sp);
@@ -272,6 +359,10 @@ void Scene::draw() {
 	}
 
 	this->camera->onChange();
+
+	//this->flashlight->lightPosition = this->camera->eye;
+	//this->flashlight->lightDirecton = this->camera->target;
+	//this->flashlight->onChange();
 
 	// draw objects
 	for (auto o : this->objects) {

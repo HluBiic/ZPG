@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Libraries\glm-master;Libraries\glew-2.1.0\include;Libraries\glfw-3.4.bin.WIN64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>include;Libraries\glm-master;Libraries\glew-2.1.0\include;Libraries\glfw-3.4.bin.WIN64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -137,12 +137,14 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ObserverSubject.cpp" />
+    <ClCompile Include="RandTranslateDynamic.cpp" />
     <ClCompile Include="Rotation.cpp" />
     <ClCompile Include="Scale.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Spin.cpp" />
+    <ClCompile Include="tiny_obj_loader.cc" />
     <ClCompile Include="Transformation.cpp" />
     <ClCompile Include="TransformGroup.cpp" />
     <ClCompile Include="Translation.cpp" />
@@ -157,6 +159,7 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="ObserverSubject.h" />
     <ClInclude Include="plain.h" />
+    <ClInclude Include="RandTranslateDynamic.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="tree.h" />
     <ClInclude Include="Model.h" />

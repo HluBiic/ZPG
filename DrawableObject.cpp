@@ -10,6 +10,10 @@ void DrawableObject::setShader() {
 	this->shaderProgram->useShaderProgram();
 }
 
+void DrawableObject::unsetShader() {
+	this->shaderProgram->unuseShaderProgram();
+}
+
 void DrawableObject::setModel() {
 	this->model->draw();
 }
@@ -23,6 +27,7 @@ void DrawableObject::draw() {
 	this->setShader();
 	this->setTransformation();
 	this->setModel();
+	this->unsetShader();
 }
 
 void DrawableObject::resetLightCounter() {

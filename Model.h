@@ -15,6 +15,8 @@
 #include "tree.h"
 #include "plain.h"
 
+#include "tiny_obj_loader.h"
+
 using namespace std;
 
 /**
@@ -35,7 +37,11 @@ class Model {
 		GLuint VAO = 0; // vertex array object
 		GLuint VBO = 0; // bertex buffer object
 	public:
+		//for simple modelst from .h files like sphere,plain,tree,bushes,suzi etc.
 		Model(const float* data, int vertCount, int floatPerVert);
+
+		//for models saved as .obj loaded with tinyobj
+		Model(const char* name);
 
 		/**
 		* @brief Draws the model and automatically selects between GL_TRIANGLE_STRIP

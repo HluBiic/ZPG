@@ -69,6 +69,7 @@ void App::createScenes() {
 	this->scenes.emplace_back(Scene());
 
 	this->scenes.at(0).basicScene();
+	//this->scenes.at(0).tryoutScene();
 	this->scenes.at(1).symetricalSpheresScene();
 	//this->scenes.at(1).allLightShadersTestScene();
 	this->scenes.at(2).galaxy();
@@ -137,6 +138,9 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
 			case GLFW_KEY_D:
 				app->scenes.at(app->currentScene).camera->move(key);
 				break;
+			case GLFW_KEY_F:
+				//TODO -> toggle flashligh on/off
+				break;
 		}
 	}
 }
@@ -175,5 +179,8 @@ void App::button_callback(GLFWwindow* window, int button, int action, int mode) 
 		else if (action == GLFW_RELEASE) {
 			app->scenes.at(app->currentScene).camera->rotating = false;
 		}
+	}
+	if (button == GLFW_MOUSE_BUTTON_LEFT) {
+		//TODO -> choosing objects in scene
 	}
 }
