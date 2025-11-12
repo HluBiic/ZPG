@@ -47,37 +47,47 @@ Scene::Scene() {
 		glm::vec4(0.729, 0.729, 0.949, 1.0)));// ...[14]...DIRECTIONAL
 
 
-	float innerCutOff = glm::cos(glm::radians(9.0f));
-	float outerCutOff = glm::cos(glm::radians(10.0f));
-	this->lights.push_back(new Light(// ...[15]...SPOTLIGHT...DOESNT WORK
+	this->flashlight = new Light(// ...SPOTLIGHT
 		glm::vec3(0.0f, 2.0f, 2.0f),
 		glm::vec3(0.0f, -1.0f, -1.0f),
 		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
 		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
-		innerCutOff, outerCutOff,
+		15.0f,
 		1.0f, 0.09f, 0.032f
-	));
+	);
 }
 
 void Scene::tryoutScene() {
 	Shader* vertexShader = new Shader();
-	vertexShader->createShaderFromFile(GL_VERTEX_SHADER, VERTEX_SHADER);
+	vertexShader->createShaderFromFile(GL_VERTEX_SHADER, VERTEX_SHADER); //moved from TEXTURE_VERT_SHADER to general VERT_SHADER
 	Shader* fragmentShader = new Shader();
-	fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, PHONG_CORRECT_FRAGMENT_SHADER);
+	fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, TEXTURE_FRAGMENT_SHADER);
 	ShaderProgram* sp = new ShaderProgram(vertexShader, fragmentShader);
 
-	sp->setUniform("objectColor", glm::vec4(0.385, 0.647, 0.812, 1.0));
+	Model* m = ModelManger::getModel("skydome.obj");
+	Model* m2 = ModelManger::getModel("ZPG Title.obj");
+	Model* m3 = ModelManger::getModel("teren.obj");
+
+	Texture* t3 = TextureManager::getTexture("grass.png");
+	Texture* t = TextureManager::getTexture("skydome.png");
+	Texture* t2 = TextureManager::getTexture("wooden_fence.png");
 
 	this->camera->registerObserver(sp);
 	this->lights.at(14)->registerObserver(sp);
-	//this->flashlight->registerObserver(sp);
-
-	Model* m = new Model(sphere, size(sphere), 6);
 
 	TransformGroup* tg = new TransformGroup();
 	tg->add(new Scale(glm::vec3(0.2f)));
 
-	this->objects.push_back(new DrawableObject(sp, m, tg));
+	TransformGroup* tg2 = new TransformGroup();
+	tg2->add(new Translation(glm::vec3(0.0f, 0.0f, 2.0f)));
+	tg2->add(new Scale(glm::vec3(0.1f)));
+
+	TransformGroup* tg3 = new TransformGroup();
+	tg3->add(new Scale(glm::vec3(0.2f)));
+
+	this->addObject(new DrawableObject(sp, m, tg, t));
+	this->addObject(new DrawableObject(sp, m2, tg2, t2));
+	this->addObject(new DrawableObject(sp, m3, tg3, t3));
 }
 
 //LAB 05 - TASK 3a - simple static triangle
@@ -107,9 +117,10 @@ void Scene::basicScene() {
 	this->lights.at(0)->registerObserver(sp);
 
 	//Model* m = new Model(triangle, size(triangle), 6);...for basic triangle
-	Model* m = new Model("house.obj");
-	Model* m2 = new Model("Login.obj");
-	Model* m3 = new Model("ZPG Title.obj");
+	//Model* m = new Model("house.obj");
+	Model* m = ModelManger::getModel("house.obj");
+	Model* m2 = ModelManger::getModel("Login.obj");
+	Model* m3 = ModelManger::getModel("ZPG Title.obj");
 
 	this->objects.push_back(new DrawableObject(sp, m, tgM));
 	this->objects.push_back(new DrawableObject(sp, m3, tgZPG));
@@ -212,7 +223,6 @@ void Scene::allLightShadersTestScene() {
 
 //LAB 05 - TASK 3c - forest with bushes and ground
 void Scene::forestScene() {
-	fflush(stdout);
 	Shader* vertexShader = new Shader();
 	vertexShader->createShaderFromFile(GL_VERTEX_SHADER, VERTEX_SHADER);
 	Shader* fragmentShader = new Shader();
@@ -226,10 +236,11 @@ void Scene::forestScene() {
 	for (int i = 3; i < 13; i++) { //fireflies
 		this->lights.at(i)->registerObserver(sp);
 	}
+	//this->lights.at(15)->registerObserver(sp); //flashlight
+	this->flashlight->registerObserver(sp);
 
 	Model* treeModel = new Model(tree, size(tree), 6);
 	Model* bushModel = new Model(bushes, size(bushes), 6);
-	Model* ground = new Model(plain, size(plain), 6);
 	Model* firefly = new Model(sphere, size(sphere), 6);
 
 	float xTreeOffset = 0.0f;
@@ -267,12 +278,11 @@ void Scene::forestScene() {
 		);
 	}
 
+	//------------------FIREFLIES------------------------------------------
 	//sphere for fireflies...constant shader of white color
-	Shader* vertexShaderFirefly = new Shader();
-	vertexShaderFirefly->createShaderFromFile(GL_VERTEX_SHADER, VERTEX_SHADER);
 	Shader* fragmentShaderFirefly = new Shader();
 	fragmentShaderFirefly->createShaderFromFile(GL_FRAGMENT_SHADER, CONSTANT_FRAGMENT_SHADER);
-	ShaderProgram* spFirefly = new ShaderProgram(vertexShaderFirefly, fragmentShaderFirefly);
+	ShaderProgram* spFirefly = new ShaderProgram(vertexShader, fragmentShaderFirefly);
 
 	this->camera->registerObserver(spFirefly);
 	spFirefly->setUniform("objectColor", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -291,11 +301,46 @@ void Scene::forestScene() {
 		this->objects.push_back(new DrawableObject(spFirefly, firefly, tgFirefly));
 	}
 
-	//ground
+	//------------------GROUND------------------------------------------
+	Shader* f = new Shader();
+	f->createShaderFromFile(GL_FRAGMENT_SHADER, TEXTURE_FRAGMENT_SHADER);
+	ShaderProgram* fsdfaa = new ShaderProgram(vertexShader, f);
+
+	this->camera->registerObserver(fsdfaa);
+
+	Model* ground = new Model(plainTextured, size(plainTextured), 8); Texture* grassText = new Texture("grass.png");
 	TransformGroup* tgGround = new TransformGroup();
 	tgGround->add(new Translation(glm::vec3(0.8f, 0.0f, 0.8f)));
 	tgGround->add(new Scale(glm::vec3(4.0f)));
-	this->objects.push_back(new DrawableObject(sp, ground, tgGround));
+
+	this->addObject(new DrawableObject(fsdfaa, ground, tgGround, grassText));
+
+	//------------------BACKGROUDN------------------------------------------
+
+	Model* skyDome = ModelManger::getModel("skydome.obj");
+	Texture* textureSky = TextureManager::getTexture("skydome.png");
+	TransformGroup* tgSky = new TransformGroup();
+	tgSky->add(new Scale(glm::vec3(0.8f)));
+	tgSky->add(new Translation(glm::vec3(0.0f, 0.0f, 4.0f)));
+	this->addObject(new DrawableObject(fsdfaa, skyDome, tgSky, textureSky));
+	//------------------SHROCK+FIONA------------------------------------------
+	Model* shrek = ModelManger::getModel("shrek.obj");
+	Model* fiona = ModelManger::getModel("fiona.obj");
+
+	Texture* texShrek = TextureManager::getTexture("shrek.png");
+	Texture* texFiona = TextureManager::getTexture("fiona.png");
+
+	TransformGroup* tgShrek = new TransformGroup();
+	tgShrek->add(new Scale(glm::vec3(0.2f)));
+	tgShrek->add(new Translation(glm::vec3(3.0f, 0.0f, 3.0f)));
+
+	TransformGroup* tgFiona = new TransformGroup();
+	tgFiona->add(new Scale(glm::vec3(0.2f)));
+	tgFiona->add(new Rotation(-45.0f, glm::vec3(0.0, 1.0, 0.0)));
+	tgFiona->add(new Translation(glm::vec3(3.2f, 0.0f, 3.2f)));
+
+	this->addObject(new DrawableObject(fsdfaa, shrek, tgShrek, texShrek));
+	this->addObject(new DrawableObject(fsdfaa, fiona, tgFiona, texFiona));
 }
 
 //LAB 05 - TASK 3d - solar system scene prep
@@ -352,6 +397,10 @@ void Scene::addObject(DrawableObject* drawObj) {
 }
 
 void Scene::draw() {
+	//updating so that the cam "holds" the flashlight
+	this->flashlight->lightPosition = this->camera->eye;
+	this->flashlight->lightDirecton = this->camera->target;
+	this->flashlight->onChange();
 
 	//this->lights.at(0)->onChange();..onlyu 1 light
 	for (auto l : this->lights) {
@@ -359,10 +408,6 @@ void Scene::draw() {
 	}
 
 	this->camera->onChange();
-
-	//this->flashlight->lightPosition = this->camera->eye;
-	//this->flashlight->lightDirecton = this->camera->target;
-	//this->flashlight->onChange();
 
 	// draw objects
 	for (auto o : this->objects) {

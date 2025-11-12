@@ -14,20 +14,12 @@
 #include "gift.h"
 #include "tree.h"
 #include "plain.h"
+#include "Texture.h"
 
 #include "tiny_obj_loader.h"
 
 using namespace std;
 
-/**
-* @class Model
-* @brief
-* This class represents a simple (triangle, circle, rectangle) or detailed
-* model with colors. It provides functions to set up VBO, VAO and draw the
-* models using the correct OpenGL methods.
-*
-* @author HLU0035
-*/
 class Model {
 	private:
 		vector<float> rawData;
@@ -48,4 +40,6 @@ class Model {
 		* for simple models and GL_TRIANGLE_FAN for detailed models.
 		*/
 		void draw();
+
+
 };

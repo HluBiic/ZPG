@@ -136,6 +136,7 @@
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="ModelManger.cpp" />
     <ClCompile Include="ObserverSubject.cpp" />
     <ClCompile Include="RandTranslateDynamic.cpp" />
     <ClCompile Include="Rotation.cpp" />
@@ -144,6 +145,8 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Spin.cpp" />
+    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="tiny_obj_loader.cc" />
     <ClCompile Include="Transformation.cpp" />
     <ClCompile Include="TransformGroup.cpp" />
@@ -157,10 +160,13 @@
     <ClInclude Include="gift.h" />
     <ClInclude Include="IObserver.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="ModelManger.h" />
     <ClInclude Include="ObserverSubject.h" />
     <ClInclude Include="plain.h" />
     <ClInclude Include="RandTranslateDynamic.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureManager.h" />
     <ClInclude Include="tree.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="sphere.h" />
@@ -183,6 +189,7 @@
     <None Include="lambert_fragment_shader.glsl" />
     <None Include="phong_correct_fragment_shader.glsl" />
     <None Include="phong_incorrect_fragment_shader.glsl" />
+    <None Include="texture_fragment_shader.glsl" />
     <None Include="vertex_shader.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

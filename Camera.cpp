@@ -6,8 +6,10 @@
 
 //Default cam constru. with predefined vals.
 Camera::Camera() {
-	this->eye = glm::vec3(0.5f, 0.0f, 0.0f); //cameraPos in phong shader
-	this->target = glm::vec3(-1.0f, 0.0f, 0.0f); //looking towards origin
+	//this->eye = glm::vec3(0.5f, 0.0f, 0.0f); //cameraPos in phong shader
+	//this->target = glm::vec3(-1.0f, 0.0f, 0.0f); //looking towards origin
+	this->eye = glm::vec3(0.0f, 0.0f, 0.0f); //cam in center
+	this->target = glm::vec3(-0.5f, 0.0f, 0.0f);//direction to lookat...BUT NOT THE SPECIFIC POIT
 	this->up = glm::vec3(0.0f, 1.0f, 0.0f);
 	this->lastX = 400.f;
 	this->lastY = 300.f;
@@ -17,6 +19,7 @@ Camera::Camera() {
 
 glm::mat4 Camera::getViewMatrix() {
 	return glm::lookAt(this->eye, this->eye + this->target, this->up);
+	//eye+target = center -> point in the world that the cam is looking at
 }
 
 glm::mat4 Camera::getProjectionMatrix() {

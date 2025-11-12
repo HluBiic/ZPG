@@ -68,8 +68,8 @@ void App::createScenes() {
 	this->scenes.emplace_back(Scene());
 	this->scenes.emplace_back(Scene());
 
-	this->scenes.at(0).basicScene();
-	//this->scenes.at(0).tryoutScene();
+	//this->scenes.at(0).basicScene();
+	this->scenes.at(0).tryoutScene();
 	this->scenes.at(1).symetricalSpheresScene();
 	//this->scenes.at(1).allLightShadersTestScene();
 	this->scenes.at(2).galaxy();
@@ -78,9 +78,11 @@ void App::createScenes() {
 
 void App::run() {
 	glEnable(GL_DEPTH_TEST); // Do depth comparisons and update the depth buff
+
 	while (!glfwWindowShouldClose(this->window)) {
 		// clear color and depth buffer
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
 
 		// draw the currently chosen scene
 		if (this->currentScene < this->scenes.size()) {
@@ -140,6 +142,12 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
 				break;
 			case GLFW_KEY_F:
 				//TODO -> toggle flashligh on/off
+				int isEnabled = app->scenes.at(app->currentScene).flashlight->flashlightEnabled;
+				if (isEnabled == 1) {
+					app->scenes.at(app->currentScene).flashlight->flashlightEnabled = 0;
+				} else {
+					app->scenes.at(app->currentScene).flashlight->flashlightEnabled = 1;
+				}
 				break;
 		}
 	}

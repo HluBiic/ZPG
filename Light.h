@@ -22,8 +22,8 @@ public:
 	glm::vec4 specularColor = glm::vec4(0.0); //point
 	glm::vec3 lightDirecton = glm::vec4(0.0); //directional light, spotlihgh
 
-	float cutOff = 0.0f; //beta..angle where light is 1
-	float outerCutOff = 0.0f; //alpha..angle where light fades to 0
+	float cutOff = 0.0f;
+	//float innerCutOff = 0.0f;...moved directlry into shader
 
 	//for light attenuation
 	float attenConst = 0.0f; //point
@@ -32,7 +32,7 @@ public:
 
 	int type = LightType::POINT; //default point light
 
-	bool flashlightEnabled = true; //toggle on/off with F
+	int flashlightEnabled = 1; //toggle on/off with F...1 ON...0 OFF
 
 
 	//point light constructor
@@ -45,7 +45,7 @@ public:
 	Light(glm::vec3 lightDir, glm::vec4 diffCol, glm::vec4 specCol);
 
 	//spotlight constructor
-	Light(glm::vec3 position, glm::vec3 lightDir, glm::vec4 diffCol, glm::vec4 specCol, float innerCutOff, float outterCutOff, float attenConst, float attenLinear, float attenQuadric);
+	Light(glm::vec3 position, glm::vec3 lightDir, glm::vec4 diffCol, glm::vec4 specCol, float cutOff, float attenConst, float attenLinear, float attenQuadric);
 
 	void onChange(); // sends info about light position to all observers
 };

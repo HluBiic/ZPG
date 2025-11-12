@@ -11,17 +11,25 @@ Model::Model(const float* data, int length, int floatsPerVert) {
     glGenBuffers(1, &this->VBO);
     glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
     glBufferData(GL_ARRAY_BUFFER, this->rawVertCount * this->floatsPerVert * sizeof(float), this->rawData.data(), GL_STATIC_DRAW);
+
     //VAO
     glGenVertexArrays(1, &this->VAO);
     glBindVertexArray(this->VAO);
     glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
 
+    //vert position
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, this->floatsPerVert * sizeof(float), (GLvoid*)0);
     glEnableVertexAttribArray(0);
 
-    // normala
+    //normal
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, this->floatsPerVert * sizeof(float), (GLvoid*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+
+    //uv -> texture coord if given
+    if(this->floatsPerVert == 8) {
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, this->floatsPerVert * sizeof(float), (GLvoid*)(6 * sizeof(float)));
+        glEnableVertexAttribArray(2);
+    }
 }
 
 //code from LMS + little corrections
@@ -80,11 +88,11 @@ Model::Model(const char* name) {
     glBindVertexArray(this->VAO);
     glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
 
-    glEnableVertexAttribArray(0); //enable vertex attributes  
+    glEnableVertexAttribArray(0); //enable vertex attributes...vertex
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(1); //enable vertex attributes  
+    glEnableVertexAttribArray(1); //enable vertex attributes...normal
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(2); //enable vertex attributes  
+    glEnableVertexAttribArray(2); //enable vertex attributes...uv for textures
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 }
 

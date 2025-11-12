@@ -141,10 +141,10 @@ void ShaderProgram::update(ObserverSubject* s) {
         string attConstString = "lights[" + to_string(this->processedLightIndex) + "].attenConst";
         string attLinearlString = "lights[" + to_string(this->processedLightIndex) + "].attenLinear";
         string attQuadString = "lights[" + to_string(this->processedLightIndex) + "].attenQuadric";
-        string lightDirDirectionalString = "lights[" + to_string(this->processedLightIndex) + "].lightDirDirectionalLight";
+        string lightDirString = "lights[" + to_string(this->processedLightIndex) + "].lightDir";
         string cutOffString = "lights[" + to_string(this->processedLightIndex) + "].cutOff";
-        string outerCutOffString = "lights[" + to_string(this->processedLightIndex) + "].outerCutOff";
-
+        string toggledString = "lights[" + to_string(this->processedLightIndex) + "].toggled";
+        
 
         switch (light->type) {
             case LightType::POINT: //pos,attConst,attLinear,attQuad
@@ -156,16 +156,17 @@ void ShaderProgram::update(ObserverSubject* s) {
             case LightType::AMBIENT: //only diffuse + spec col, no pos or attenuation
                 break;
             case LightType::DIRECTIONAL:
-                setUniform(lightDirDirectionalString.c_str(), light->lightDirecton);
+                setUniform(lightDirString.c_str(), light->lightDirecton);
                 break;
             case LightType::SPOT:
-                //setUniform(lightPosString.c_str(), glm::vec4(light->lightPosition, 1.0)); //get the pos from light in scene
-                //setUniform(attConstString.c_str(), light->attenConst);
-                //setUniform(attLinearlString.c_str(), light->attenLinear);
-               // setUniform(attQuadString.c_str(), light->attenQuadric);
-               // setUniform(lightDirDirectionalString.c_str(), light->lightDirecton);
-                //setUniform(cutOffString.c_str(), light->cutOff);
-                //setUniform(outerCutOffString.c_str(), light->outerCutOff);
+                setUniform(lightPosString.c_str(), glm::vec4(light->lightPosition, 1.0)); //get the pos from light in scene
+                setUniform(attConstString.c_str(), light->attenConst);
+                setUniform(attLinearlString.c_str(), light->attenLinear);
+                setUniform(attQuadString.c_str(), light->attenQuadric);
+                setUniform(lightDirString.c_str(), light->lightDirecton);
+                setUniform(cutOffString.c_str(), glm::cos(glm::radians(light->cutOff)));//https://learnopengl.com/Lighting/Light-casters
+                setUniform(toggledString.c_str(), light->flashlightEnabled);
+                //cos bcs in shader dot product returns a cos val and not an angle!!...and we need to compare this vals
                 break;
             //no need for default bcs light is defaultry already set to POINT
         }
