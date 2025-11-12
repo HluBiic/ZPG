@@ -19,3 +19,8 @@ Libraries/
 # Binaries
 *.dll
 *.lib
+/assets/textures
+/assets/fiona.mtl
+/assets/shrek.mtl
+/assets/teren.mtl
+/include
