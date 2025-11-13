@@ -8,16 +8,24 @@
 #include "TransformGroup.h"
 #include "Spin.h"
 #include "Texture.h"
+#include <string>
+
+constexpr const char* VERTEX_SHADER = "vertex_shader.glsl";
+constexpr const char* CONSTANT_FRAGMENT_SHADER = "constant_fragment_shader.glsl";
 
 class DrawableObject {
 protected:
+	int objectId;
+
+	static int IDCounter;
+public:
 	ShaderProgram* shaderProgram;
 	Model* model;
 	Transformation* transformation;
 	Texture* texture;
 
-	int ID = 0;
-public:
+	bool visible = false;
+
 	DrawableObject();
 	DrawableObject(ShaderProgram* sp, Model* m, Transformation* t);
 	DrawableObject(ShaderProgram* sp, Model* m, Transformation* t, Texture* tx);
@@ -32,4 +40,6 @@ public:
 	void resetLightCounter();
 
 	int getID();
+
+	string getModelName();
 };

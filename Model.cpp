@@ -30,6 +30,7 @@ Model::Model(const float* data, int length, int floatsPerVert) {
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, this->floatsPerVert * sizeof(float), (GLvoid*)(6 * sizeof(float)));
         glEnableVertexAttribArray(2);
     }
+    this->modelName = "NULL";
 }
 
 //code from LMS + little corrections
@@ -76,6 +77,7 @@ Model::Model(const char* name) {
                 vertices.push_back(0.0f);
             }
         }
+        this->modelName = name;
     }
 
     //VBO

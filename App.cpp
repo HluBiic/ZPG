@@ -78,16 +78,23 @@ void App::createScenes() {
 
 void App::run() {
 	glEnable(GL_DEPTH_TEST); // Do depth comparisons and update the depth buff
+	glEnable(GL_STENCIL_TEST); //stencil buffer will contain ids of the drawable objects
 
 	while (!glfwWindowShouldClose(this->window)) {
 		// clear color and depth buffer
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
+		/*for (auto obj : this->scenes.at(this->currentScene).objects) {
+			glStencilFunc(GL_ALWAYS, obj->getID(), 0xFF);
+		}...moved to Scene::draw bcs stencil buffer showed not id but total number of DrawableObjects*/
 
 		// draw the currently chosen scene
 		if (this->currentScene < this->scenes.size()) {
 			this->scenes.at(this->currentScene).draw();
 		}
+
+
 
 		// update other events like input handling
 		glfwPollEvents(); // For procesing any pending input events (nmouse, keyboard, window)
@@ -102,7 +109,7 @@ void App::run() {
 }
 
 void App::cursor_pos_callback(GLFWwindow* window, double mouseX, double mouseY) {
-	printf("cursor_pos_callback %d, %d;\n", (int)mouseX, (int)mouseY );
+	//printf("cursor_pos_callback %d, %d;\n", (int)mouseX, (int)mouseY );
 	App* app = (App*)glfwGetWindowUserPointer(window);
 	app->scenes.at(app->currentScene).camera->mouseMovement(mouseX, mouseY);
 }
@@ -183,12 +190,44 @@ void App::button_callback(GLFWwindow* window, int button, int action, int mode) 
 			glfwGetCursorPos(window, &x, &y);
 			app->scenes.at(app->currentScene).camera->lastX = (float)x;
 			app->scenes.at(app->currentScene).camera->lastY = (float)y;
+
+			//object deleting after right click
+			GLbyte color[4];
+			GLfloat depth;
+			GLuint index;
+			int newy = app->scenes.at(app->currentScene).camera->getResolution().y - y;
+			glReadPixels(x, newy, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, color);
+			glReadPixels(x, newy, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+			glReadPixels(x, newy, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &index);
+			printf("Clicked on pixel %g, %g, color %02hhx%02hhx%02hhx%02hhx, depth %f, stencil index %u\n", x, y, color[0], color[1], color[2], color[3], depth, index);
+			//%g supresses tailing zeros so 123.000 -> 123
+
+			app->scenes.at(app->currentScene).setInactiveDrawObj(index);
 		}
 		else if (action == GLFW_RELEASE) {
 			app->scenes.at(app->currentScene).camera->rotating = false;
 		}
 	}
 	if (button == GLFW_MOUSE_BUTTON_LEFT) {
-		//TODO -> choosing objects in scene
+		if (action == GLFW_PRESS) {
+			//TODO -> planting trees in the scene after left click
+			double x, y;
+			glfwGetCursorPos(window, &x, &y);
+
+			GLfloat depth;
+			int newy = app->scenes.at(app->currentScene).camera->getResolution().y - y;
+			glReadPixels(x, newy, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+
+			glm::vec3 screenX = glm::vec3(x, newy, depth);
+			glm::mat4 view = app->scenes.at(app->currentScene).camera->getViewMatrix();
+			glm::mat4 projection = app->scenes.at(app->currentScene).camera->getProjectionMatrix();
+			//glm::vec4 viewPort = glm::vec4(0, 0, getResolution().x, getResolution().y);
+			glm::vec2 camResolution = app->scenes.at(app->currentScene).camera->getResolution();
+			glm::vec4 viewPort = glm::vec4(0, 0, camResolution.x, camResolution.y);
+			glm::vec3 pos = glm::unProject(screenX, view, projection, viewPort);
+			printf("unProject [%f,%f,%f]\n", pos.x, pos.y, pos.z);
+
+			app->scenes.at(app->currentScene).growNewTree(pos);
+		}
 	}
 }

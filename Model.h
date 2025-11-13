@@ -29,6 +29,8 @@ class Model {
 		GLuint VAO = 0; // vertex array object
 		GLuint VBO = 0; // bertex buffer object
 	public:
+		string modelName;
+
 		//for simple modelst from .h files like sphere,plain,tree,bushes,suzi etc.
 		Model(const float* data, int vertCount, int floatPerVert);
 

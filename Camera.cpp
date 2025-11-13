@@ -8,7 +8,7 @@
 Camera::Camera() {
 	//this->eye = glm::vec3(0.5f, 0.0f, 0.0f); //cameraPos in phong shader
 	//this->target = glm::vec3(-1.0f, 0.0f, 0.0f); //looking towards origin
-	this->eye = glm::vec3(0.0f, 0.0f, 0.0f); //cam in center
+	this->eye = glm::vec3(0.0f, 1.0f, 0.0f); //cam in center
 	this->target = glm::vec3(-0.5f, 0.0f, 0.0f);//direction to lookat...BUT NOT THE SPECIFIC POIT
 	this->up = glm::vec3(0.0f, 1.0f, 0.0f);
 	this->lastX = 400.f;
@@ -37,6 +37,10 @@ void Camera::setViewportSize(int w, int h) {
 	this->width = w;
 	this->height = h;
 	onChange();
+}
+
+glm::vec2 Camera::getResolution() {
+	return glm::vec2(this->width, this->height);
 }
 
 void Camera::mouseMovement(double xpos, double ypos) {

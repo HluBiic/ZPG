@@ -43,4 +43,6 @@ public:
 
 	//update origin. viewport
 	void setViewportSize(int w, int h);
+
+	glm::vec2 getResolution();
 };

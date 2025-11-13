@@ -1,10 +1,14 @@
 ﻿#include "DrawableObject.h"
 
+int DrawableObject::IDCounter = 0;
+
 DrawableObject::DrawableObject(ShaderProgram* sp, Model* m, Transformation* t) {
 	this->shaderProgram = sp;
 	this->model = m;
 	this->transformation = t;
-	this->ID++;
+	DrawableObject::IDCounter++;
+	this->objectId = DrawableObject::IDCounter;
+	this->visible = true;
 }
 
 DrawableObject::DrawableObject(ShaderProgram* sp, Model* m, Transformation* t, Texture* tx) {
@@ -12,7 +16,9 @@ DrawableObject::DrawableObject(ShaderProgram* sp, Model* m, Transformation* t, T
 	this->model = m;
 	this->transformation = t;
 	this->texture = tx;
-	this->ID++;
+	DrawableObject::IDCounter++;
+	this->objectId = DrawableObject::IDCounter;
+	this->visible = true;
 }
 
 void DrawableObject::setShader() {
@@ -55,5 +61,13 @@ void DrawableObject::resetLightCounter() {
 }
 
 int DrawableObject::getID() {
-	return this->ID;
+	return this->objectId;
+}
+
+string DrawableObject::getModelName() {
+	string name = this->model->modelName;
+	size_t dot = name.find_last_of('.');
+	if (dot != string::npos)
+		name = name.substr(0, dot);
+	return name;
 }

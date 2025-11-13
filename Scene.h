@@ -8,9 +8,9 @@
 #include "TextureManager.h"
 
 //bcs MULTIPLE times mistakes when writing the filename :)
-constexpr const char* VERTEX_SHADER = "vertex_shader.glsl";
+//constexpr const char* VERTEX_SHADER = "vertex_shader.glsl";
 constexpr const char* TEXTURE_VERTEX_SHADER = "texture_vertex_shader.glsl";
-constexpr const char* CONSTANT_FRAGMENT_SHADER = "constant_fragment_shader.glsl";
+//constexpr const char* CONSTANT_FRAGMENT_SHADER = "constant_fragment_shader.glsl";
 constexpr const char* LAMBERT_FRAGMENT_SHADER = "lambert_fragment_shader.glsl";
 constexpr const char* PHONG_CORRECT_FRAGMENT_SHADER = "phong_correct_fragment_shader.glsl";
 constexpr const char* PHONG_INCORRECT_FRAGMENT_SHADER = "phong_incorrect_fragment_shader.glsl";
@@ -27,6 +27,8 @@ public:
 	Light* flashlight;
 	vector<DrawableObject*> objects;
 
+	DrawableObject* growableTreeModel;
+
 	Scene();
 	void tryoutScene();
 	void basicScene();
@@ -39,4 +41,7 @@ public:
 	void draw();
 
 	void moveCam(int key);
+
+	void setInactiveDrawObj(int id);
+	void growNewTree(glm::vec3 position);
 };

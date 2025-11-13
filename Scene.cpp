@@ -1,4 +1,5 @@
 #include "Scene.h"
+#include "Scene.h"
 
 Scene::Scene() {
 	this->camera = new Camera();
@@ -54,6 +55,23 @@ Scene::Scene() {
 		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
 		15.0f,
 		1.0f, 0.09f, 0.032f
+	);
+
+	Shader* vertexShaderGrow = new Shader();
+	vertexShaderGrow->createShaderFromFile(GL_VERTEX_SHADER, VERTEX_SHADER);
+	Shader* fragmentShaderGrow = new Shader();
+	fragmentShaderGrow->createShaderFromFile(GL_FRAGMENT_SHADER, PHONG_CORRECT_FRAGMENT_SHADER);
+	ShaderProgram* spGrow = new ShaderProgram(vertexShaderGrow, fragmentShaderGrow);
+	spGrow->setUniform("objectColor", glm::vec4(0.385, 0.647, 0.812, 1.0));
+	this->camera->registerObserver(spGrow);
+	for (auto l: this->lights) {
+		l->registerObserver(spGrow);
+	}
+
+	this->growableTreeModel = new DrawableObject(
+		spGrow,
+		new Model(tree, size(tree), 6),
+		new TransformGroup()
 	);
 }
 
@@ -230,6 +248,8 @@ void Scene::forestScene() {
 	ShaderProgram* sp = new ShaderProgram(vertexShader, fragmentShader);
 	sp->setUniform("objectColor", glm::vec4(0.385, 0.647, 0.812, 1.0));
 
+	this->growableTreeModel->shaderProgram = sp;
+
 	this->camera->registerObserver(sp);
 
 	this->lights.at(2)->registerObserver(sp); //moon/sun
@@ -308,10 +328,10 @@ void Scene::forestScene() {
 
 	this->camera->registerObserver(fsdfaa);
 
-	Model* ground = new Model(plainTextured, size(plainTextured), 8); Texture* grassText = new Texture("grass.png");
+	Model* ground = ModelManger::getModel("teren.obj"); Texture* grassText = TextureManager::getTexture("grass.png");
 	TransformGroup* tgGround = new TransformGroup();
-	tgGround->add(new Translation(glm::vec3(0.8f, 0.0f, 0.8f)));
-	tgGround->add(new Scale(glm::vec3(4.0f)));
+	tgGround->add(new Translation(glm::vec3(30.0f, 0.0f, 30.0f)));
+	tgGround->add(new Scale(glm::vec3(0.08f)));
 
 	this->addObject(new DrawableObject(fsdfaa, ground, tgGround, grassText));
 
@@ -320,7 +340,7 @@ void Scene::forestScene() {
 	Model* skyDome = ModelManger::getModel("skydome.obj");
 	Texture* textureSky = TextureManager::getTexture("skydome.png");
 	TransformGroup* tgSky = new TransformGroup();
-	tgSky->add(new Scale(glm::vec3(0.8f)));
+	tgSky->add(new Scale(glm::vec3(2.0f)));
 	tgSky->add(new Translation(glm::vec3(0.0f, 0.0f, 4.0f)));
 	this->addObject(new DrawableObject(fsdfaa, skyDome, tgSky, textureSky));
 	//------------------SHROCK+FIONA------------------------------------------
@@ -411,11 +431,41 @@ void Scene::draw() {
 
 	// draw objects
 	for (auto o : this->objects) {
-		o->resetLightCounter();
-		o->draw();
+		if (o->visible) {
+			o->resetLightCounter();
+			glStencilFunc(GL_ALWAYS, o->getID(), 0xFF);
+			o->draw();
+		}
 	}
 }
 
 void Scene::moveCam(int key) {
 	this->camera->move(key);
 }
+
+void Scene::setInactiveDrawObj(int id) {
+	for (auto o : this->objects) {
+		int objId = o->getID();
+		if (objId == id) {
+			string name = o->getModelName();
+			if (name != "plain" && name != "skydome" && name != "teren") {
+				//o->visible = false;
+				this->objects.erase(remove(this->objects.begin(), this->objects.end(), o), this->objects.end());// removing by the object
+				printf("removing object: %s\n", o->model->modelName.c_str());
+			} else {
+				printf("cannot remove object: %s\n", o->model->modelName.c_str());
+			}
+		}
+	}
+}
+
+void Scene::growNewTree(glm::vec3 position) {
+	TransformGroup* tg = new TransformGroup();
+	tg->add(new Scale(glm::vec3(0.1f)));
+	tg->add(new Translation(position));
+
+	DrawableObject* newTree = new DrawableObject(this->growableTreeModel->shaderProgram, this->growableTreeModel->model, tg);
+	this->addObject(newTree);
+	printf("planting tree at: %f,%f,%f\n", position.x, position.y, position.z);
+}
+
