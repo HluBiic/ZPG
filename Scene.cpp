@@ -1,5 +1,4 @@
 #include "Scene.h"
-#include "Scene.h"
 
 Scene::Scene() {
 	this->camera = new Camera();
@@ -57,66 +56,63 @@ Scene::Scene() {
 		1.0f, 0.09f, 0.032f
 	);
 
-	Shader* vertexShaderGrow = new Shader();
-	vertexShaderGrow->createShaderFromFile(GL_VERTEX_SHADER, VERTEX_SHADER);
-	Shader* fragmentShaderGrow = new Shader();
-	fragmentShaderGrow->createShaderFromFile(GL_FRAGMENT_SHADER, PHONG_CORRECT_FRAGMENT_SHADER);
-	ShaderProgram* spGrow = new ShaderProgram(vertexShaderGrow, fragmentShaderGrow);
+	ShaderProgram* spGrow = ShaderProgManager::getShaderProgram(VERTEX_SHADER, PHONG_CORRECT_FRAGMENT_SHADER);
 	spGrow->setUniform("objectColor", glm::vec4(0.385, 0.647, 0.812, 1.0));
 	this->camera->registerObserver(spGrow);
-	for (auto l: this->lights) {
-		l->registerObserver(spGrow);
-	}
+	this->flashlight->registerObserver(spGrow);
 
 	this->growableTreeModel = new DrawableObject(
 		spGrow,
 		new Model(tree, size(tree), 6),
 		new TransformGroup()
 	);
+	srand(time(0));
 }
 
 void Scene::tryoutScene() {
-	Shader* vertexShader = new Shader();
-	vertexShader->createShaderFromFile(GL_VERTEX_SHADER, VERTEX_SHADER); //moved from TEXTURE_VERT_SHADER to general VERT_SHADER
-	Shader* fragmentShader = new Shader();
-	fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, TEXTURE_FRAGMENT_SHADER);
-	ShaderProgram* sp = new ShaderProgram(vertexShader, fragmentShader);
+	ShaderProgram* sp = ShaderProgManager::getShaderProgram(VERTEX_SHADER, BLINN_FRAGMENT_SHADER);
+	sp->setUniform("objectColor", glm::vec4(1, 0, 0, 1.0));
+	sp->setUniform("lightPosition", this->lights.at(0)->lightPosition); //for Lambert shader
+	//FOR TESTING PURPOSES
+	sp->setUniform("camPosition", this->camera->eye);
+	sp->setUniform("shinines", 32.0f);
+	sp->setUniform("specularColor", this->lights.at(0)->specularColor);
+	ShaderProgManager::registerAllObservers(sp, this->camera, this->lights.at(0));
+	//this->camera->registerObserver(sp);
+	//this->lights.at(0)->registerObserver(sp);
 
-	Model* m = ModelManger::getModel("skydome.obj");
-	Model* m2 = ModelManger::getModel("ZPG Title.obj");
-	Model* m3 = ModelManger::getModel("teren.obj");
+	Model* m4 = ModelManger::getModel("sphere.obj");
 
 	Texture* t3 = TextureManager::getTexture("grass.png");
-	Texture* t = TextureManager::getTexture("skydome.png");
 	Texture* t2 = TextureManager::getTexture("wooden_fence.png");
+	Texture* t4 = TextureManager::getTexture("sun.png");
 
-	this->camera->registerObserver(sp);
-	this->lights.at(14)->registerObserver(sp);
 
-	TransformGroup* tg = new TransformGroup();
-	tg->add(new Scale(glm::vec3(0.2f)));
+	ShaderProgram* sp2 = ShaderProgManager::getShaderProgram(VERTEX_SHADER, TEXTURE_FRAGMENT_SHADER);
 
-	TransformGroup* tg2 = new TransformGroup();
-	tg2->add(new Translation(glm::vec3(0.0f, 0.0f, 2.0f)));
-	tg2->add(new Scale(glm::vec3(0.1f)));
+	ShaderProgManager::registerAllObservers(sp2, this->camera, this->lights.at(0));
+	//this->camera->registerObserver(sp2);
+	//this->lights.at(0)->registerObserver(sp2);
 
-	TransformGroup* tg3 = new TransformGroup();
-	tg3->add(new Scale(glm::vec3(0.2f)));
+	TransformGroup* tg4 = new TransformGroup();
 
-	this->addObject(new DrawableObject(sp, m, tg, t));
-	this->addObject(new DrawableObject(sp, m2, tg2, t2));
-	this->addObject(new DrawableObject(sp, m3, tg3, t3));
+	TransformGroup* tg5 = new TransformGroup();
+	tg5->add(new Translation(glm::vec3(0.0f, 0.0f, -2.0f)));
+
+	this->addObject(new DrawableObject(sp, m4, tg4));
+	this->addObject(new DrawableObject(sp, m4, tg5));
+
 }
 
 //LAB 05 - TASK 3a - simple static triangle
 void Scene::basicScene() {
-	Shader* vertexShader = new Shader();
+	/*Shader* vertexShader = new Shader();
 	vertexShader->createShaderFromFile(GL_VERTEX_SHADER, VERTEX_SHADER);
 	Shader* fragmentShader = new Shader();
 	//fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, CONSTANT_FRAGMENT_SHADER);...for basic triangle
-	fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, PHONG_CORRECT_FRAGMENT_SHADER);
-	ShaderProgram* sp = new ShaderProgram(vertexShader, fragmentShader);
-	sp->setUniform("objectColor", glm::vec4(0.385, 0.647, 0.812, 1.0));
+	fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, PHONG_CORRECT_FRAGMENT_SHADER);*/
+	ShaderProgram* sp = ShaderProgManager::getShaderProgram(VERTEX_SHADER, PHONG_CORRECT_FRAGMENT_SHADER);
+	//sp->setUniform("objectColor", glm::vec4(0.385, 0.647, 0.812, 1.0));
 
 	TransformGroup* tgM = new TransformGroup();
 	tgM->add(new Scale(glm::vec3(0.2f)));
@@ -147,11 +143,7 @@ void Scene::basicScene() {
 
 //LAB 05 - TASK 3b - 4x spheres symetricaly placed along axes
 void Scene::symetricalSpheresScene() {
-	Shader* vertexShader = new Shader();
-	vertexShader->createShaderFromFile(GL_VERTEX_SHADER, VERTEX_SHADER);
-	Shader* fragmentShader = new Shader();
-	fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, PHONG_CORRECT_FRAGMENT_SHADER);
-	ShaderProgram* sp = new ShaderProgram(vertexShader, fragmentShader);
+	ShaderProgram* sp = ShaderProgManager::getShaderProgram(VERTEX_SHADER, BLINN_FRAGMENT_SHADER);
 	sp->setUniform("objectColor", glm::vec4(0.385, 0.647, 0.812, 1.0));
 
 	this->camera->registerObserver(sp);
@@ -186,24 +178,10 @@ void Scene::symetricalSpheresScene() {
 
 // LAB 05 - TASK 02 - 4 spheres with 4 basic lightning models
 void Scene::allLightShadersTestScene() {
-	Shader* vertexShader = new Shader();
-	vertexShader->createShaderFromFile(GL_VERTEX_SHADER, VERTEX_SHADER);
-
-	Shader* fragmentShader = new Shader();
-	fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, CONSTANT_FRAGMENT_SHADER);
-	ShaderProgram* sp = new ShaderProgram(vertexShader, fragmentShader);
-
-	Shader* fragmentShader2 = new Shader();
-	fragmentShader2->createShaderFromFile(GL_FRAGMENT_SHADER, LAMBERT_FRAGMENT_SHADER);
-	ShaderProgram* sp2 = new ShaderProgram(vertexShader, fragmentShader2);
-
-	Shader* fragmentShader3 = new Shader();
-	fragmentShader3->createShaderFromFile(GL_FRAGMENT_SHADER, PHONG_CORRECT_FRAGMENT_SHADER);
-	ShaderProgram* sp3 = new ShaderProgram(vertexShader, fragmentShader3);
-
-	Shader* fragmentShader4 = new Shader();
-	fragmentShader4->createShaderFromFile(GL_FRAGMENT_SHADER, BLINN_FRAGMENT_SHADER);
-	ShaderProgram* sp4 = new ShaderProgram(vertexShader, fragmentShader4);
+	ShaderProgram* sp = ShaderProgManager::getShaderProgram(VERTEX_SHADER, CONSTANT_FRAGMENT_SHADER);
+	ShaderProgram* sp2 = ShaderProgManager::getShaderProgram(VERTEX_SHADER, LAMBERT_FRAGMENT_SHADER);
+	ShaderProgram* sp3 = ShaderProgManager::getShaderProgram(VERTEX_SHADER, PHONG_CORRECT_FRAGMENT_SHADER);
+	ShaderProgram* sp4 = ShaderProgManager::getShaderProgram(VERTEX_SHADER, BLINN_FRAGMENT_SHADER);
 
 	this->camera->registerObserver(sp);
 	this->camera->registerObserver(sp2);
@@ -241,11 +219,7 @@ void Scene::allLightShadersTestScene() {
 
 //LAB 05 - TASK 3c - forest with bushes and ground
 void Scene::forestScene() {
-	Shader* vertexShader = new Shader();
-	vertexShader->createShaderFromFile(GL_VERTEX_SHADER, VERTEX_SHADER);
-	Shader* fragmentShader = new Shader();
-	fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, PHONG_CORRECT_FRAGMENT_SHADER);
-	ShaderProgram* sp = new ShaderProgram(vertexShader, fragmentShader);
+	ShaderProgram* sp = ShaderProgManager::getShaderProgram(VERTEX_SHADER, PHONG_CORRECT_FRAGMENT_SHADER);
 	sp->setUniform("objectColor", glm::vec4(0.385, 0.647, 0.812, 1.0));
 
 	this->growableTreeModel->shaderProgram = sp;
@@ -258,6 +232,7 @@ void Scene::forestScene() {
 	}
 	//this->lights.at(15)->registerObserver(sp); //flashlight
 	this->flashlight->registerObserver(sp);
+
 
 	Model* treeModel = new Model(tree, size(tree), 6);
 	Model* bushModel = new Model(bushes, size(bushes), 6);
@@ -300,9 +275,9 @@ void Scene::forestScene() {
 
 	//------------------FIREFLIES------------------------------------------
 	//sphere for fireflies...constant shader of white color
-	Shader* fragmentShaderFirefly = new Shader();
-	fragmentShaderFirefly->createShaderFromFile(GL_FRAGMENT_SHADER, CONSTANT_FRAGMENT_SHADER);
-	ShaderProgram* spFirefly = new ShaderProgram(vertexShader, fragmentShaderFirefly);
+	/*Shader* fragmentShaderFirefly = new Shader();
+	fragmentShaderFirefly->createShaderFromFile(GL_FRAGMENT_SHADER, CONSTANT_FRAGMENT_SHADER);*/
+	ShaderProgram* spFirefly = ShaderProgManager::getShaderProgram(VERTEX_SHADER, CONSTANT_FRAGMENT_SHADER);
 
 	this->camera->registerObserver(spFirefly);
 	spFirefly->setUniform("objectColor", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -322,9 +297,9 @@ void Scene::forestScene() {
 	}
 
 	//------------------GROUND------------------------------------------
-	Shader* f = new Shader();
-	f->createShaderFromFile(GL_FRAGMENT_SHADER, TEXTURE_FRAGMENT_SHADER);
-	ShaderProgram* fsdfaa = new ShaderProgram(vertexShader, f);
+	/*Shader* f = new Shader();
+	f->createShaderFromFile(GL_FRAGMENT_SHADER, TEXTURE_FRAGMENT_SHADER);*/
+	ShaderProgram* fsdfaa = ShaderProgManager::getShaderProgram(VERTEX_SHADER, TEXTURE_FRAGMENT_SHADER);
 
 	this->camera->registerObserver(fsdfaa);
 
@@ -340,8 +315,9 @@ void Scene::forestScene() {
 	Model* skyDome = ModelManger::getModel("skydome.obj");
 	Texture* textureSky = TextureManager::getTexture("skydome.png");
 	TransformGroup* tgSky = new TransformGroup();
-	tgSky->add(new Scale(glm::vec3(2.0f)));
 	tgSky->add(new Translation(glm::vec3(0.0f, 0.0f, 4.0f)));
+	tgSky->add(new Scale(glm::vec3(2.0f)));
+	
 	this->addObject(new DrawableObject(fsdfaa, skyDome, tgSky, textureSky));
 	//------------------SHROCK+FIONA------------------------------------------
 	Model* shrek = ModelManger::getModel("shrek.obj");
@@ -365,31 +341,38 @@ void Scene::forestScene() {
 
 //LAB 05 - TASK 3d - solar system scene prep
 void Scene::galaxy() {
-    Shader* vertexShader = new Shader();
+    /*Shader* vertexShader = new Shader();
     vertexShader->createShaderFromFile(GL_VERTEX_SHADER, VERTEX_SHADER);
     Shader* fragmentShader = new Shader();
-    fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, PHONG_CORRECT_FRAGMENT_SHADER);
-    ShaderProgram* sp = new ShaderProgram(vertexShader, fragmentShader);
+    //fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, PHONG_CORRECT_FRAGMENT_SHADER);
+	fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, TEXTURE_FRAGMENT_SHADER);*/
+	ShaderProgram* sp = ShaderProgManager::getShaderProgram(VERTEX_SHADER, TEXTURE_FRAGMENT_SHADER);
 	sp->setUniform("objectColor", glm::vec4(0.385, 0.647, 0.812, 1.0));
 
     this->camera->registerObserver(sp);
     this->lights.at(0)->registerObserver(sp);
 
-    Model* sun = new Model(sphere, size(sphere), 6);
-    Model* earth = new Model(sphere, size(sphere), 6);
-    Model* moon = new Model(sphere, size(sphere), 6);
+    //Model* sun = new Model(sphere, size(sphere), 6);
+	Model* sun = ModelManger::getModel("sphere.obj");
+	Texture* sunTex = TextureManager::getTexture("sun.png");
+    //Model* earth = new Model(sphere, size(sphere), 6);
+	Model* earth = ModelManger::getModel("sphere.obj");
+	Texture* earthTex = TextureManager::getTexture("earth.png");
+    //Model* moon = new Model(sphere, size(sphere), 6);
+	Model* moon = ModelManger::getModel("sphere.obj");
+	Texture* moonTex = TextureManager::getTexture("moon.png");
 
     //------------------SUN--------------------------------------------
     TransformGroup* tgSun = new TransformGroup();
 	tgSun->add(new Scale(glm::vec3(1.0f)));
-    tgSun->add(new Spin(20.0f, glm::vec3(0, 1, 0)));
+    tgSun->add(new Spin(10.0f, glm::vec3(0, 1, 0)));
 
 	//------------------EARTH------------------------------------------
 	TransformGroup* tgEarth = new TransformGroup();
 	tgEarth->add(new Scale(glm::vec3(0.5f)));//0.5
 
 	//spin around itself
-	tgEarth->add(new Spin(20.0f, glm::vec3(0, 1, 0)));
+	tgEarth->add(new Spin(30.0f, glm::vec3(0, 1, 0)));
 
 	//orbit around sun - 0,0,0
 	tgEarth->add(new Translation(glm::vec3(4.0f, 0.0f, 0.0f))); //distance earth-sun
@@ -407,9 +390,39 @@ void Scene::galaxy() {
 	tgMoon->add(new Spin(60.0f, glm::vec3(0, 1, 0)));
 	tgMoon->add(tgEarth); //moon attached to eartch
 
-    this->objects.push_back(new DrawableObject(sp, sun, tgSun));
-	this->objects.push_back(new DrawableObject(sp, earth, tgEarth));
-	this->objects.push_back(new DrawableObject(sp, moon, tgMoon));
+    this->objects.push_back(new DrawableObject(sp, sun, tgSun, sunTex));
+	this->objects.push_back(new DrawableObject(sp, earth, tgEarth, earthTex));
+	this->objects.push_back(new DrawableObject(sp, moon, tgMoon, moonTex));
+}
+
+void Scene::whacAMole() {
+	ShaderProgram* sp = ShaderProgManager::getShaderProgram(VERTEX_SHADER, TEXTURE_FRAGMENT_SHADER);
+	ShaderProgManager::registerAllObservers(sp, this->camera, this->flashlight);
+	//------------------GROUND------------------------------------------
+	this->camera->registerObserver(sp);
+	Model* ground = ModelManger::getModel("teren.obj"); Texture* grassText = TextureManager::getTexture("grass.png");
+	TransformGroup* tgGround = new TransformGroup();
+	tgGround->add(new Scale(glm::vec3(0.08f)));
+	this->addObject(new DrawableObject(sp, ground, tgGround, grassText));
+	//------------------BACKGROUDN------------------------------------------
+	Model* skyDome = ModelManger::getModel("skydome.obj"); Texture* textureSky = TextureManager::getTexture("skydome.png");
+	TransformGroup* tgSky = new TransformGroup();
+	tgSky->add(new Scale(glm::vec3(2.0f)));
+	this->addObject(new DrawableObject(sp, skyDome, tgSky, textureSky));
+	//------------------10 RANDOM-------------------------------------------
+	Model* freddy = ModelManger::getModel("meme_glamrock_freddy.obj"); Texture* freddyTex = TextureManager::getTexture("TEX_GlamRockFreddy_BaseColor.png");
+
+	//intervals so that the obj is on the flat part of the UNSCALED terrain:
+	//x (-3.5, 2.5)...z(-3.0, 3.5)
+	float maxX = 2.5f; float minX = -3.5f;
+	float maxZ = 3.5f; float minZ = -3.0f;
+
+	for (int i = 0; i < 15; i++) {
+		TransformGroup* tgFreddy = new TransformGroup();
+		tgFreddy->add(new Scale(glm::vec3(0.5f)));
+		tgFreddy->add(new RandMovement(1.0f, glm::vec3(minX, 0.0f, minZ), glm::vec3(maxX, 0.0f, maxZ)));
+		this->addObject(new DrawableObject(sp, freddy, tgFreddy, freddyTex));
+	}
 }
 
 void Scene::addObject(DrawableObject* drawObj) {

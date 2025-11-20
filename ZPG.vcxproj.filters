@@ -63,9 +63,6 @@
     <ClCompile Include="ObserverSubject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RandTranslateDynamic.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="tiny_obj_loader.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -76,6 +73,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TextureManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderProgManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WCustomTransform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RandMovement.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -155,9 +161,6 @@
     <ClInclude Include="ObserverSubject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RandTranslateDynamic.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ModelManger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -165,6 +168,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TextureManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderProgManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WCustomTransform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RandMovement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

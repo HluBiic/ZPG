@@ -26,7 +26,7 @@ void main () {
 
 	//specular part
 	//vec3 camPosition = vec3(0.5, 0.0, 0.0); //for now fixed camPos but needs to be updated!!!
-	vec3 viewDir = normalize(camPosition - worldPosition.xyz);
+	vec3 viewDir = normalize(camPosition - (worldPosition.xyz / worldPosition.w));
 	vec3 halfwayDir = normalize(lightDir + viewDir); //Blinn-Phong (L05 - page 28)
 
 	float spec = pow(max(dot(norm, halfwayDir), 0.0), shinines);

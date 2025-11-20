@@ -12,4 +12,5 @@ private:
 public:
 	void add(Transformation* t);
 	glm::mat4 apply() override;
+	void printMatrix(glm::mat4 M);
 };

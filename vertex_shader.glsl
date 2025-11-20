@@ -5,20 +5,17 @@ uniform mat4 viewMatrix;
 
 layout(location=0) in vec3 vp;
 layout(location=1) in vec3 vn;
-layout(location = 2) in vec2 vt; //textures
+layout(location = 2) in vec2 vt;
 
-//passing to frag. shader
 out vec4 worldPosition;
 out vec3 worldNormal;
 out vec2 uv;
 
 void main(void) {
-	gl_Position = projectMatrix * viewMatrix * modelMatrix * vec4(vp, 1.0); //X'= P * V * M * X;
+	float w = 1.0f;
+	gl_Position = projectMatrix * viewMatrix * modelMatrix * vec4(vp * w, w); //X'= P * V * M * X;
 
-	//multiplies each verice (ON GPU) with the transf. matrix
-	worldPosition = modelMatrix * vec4(vp, 1.0f);//transfroms vertex to world coordinates
-	//worldNormal = vn; //carefull this is incorrect...TODO after lecture 06
-	//corrected normal transformation from local to global sys...lecture 06
+	worldPosition = modelMatrix * vec4(vp * w, w);
 	worldNormal = normalize(transpose(inverse(mat3(modelMatrix))) * vn);
 	uv = vt;
 }

@@ -67,6 +67,7 @@ void App::createScenes() {
 	this->scenes.emplace_back(Scene());
 	this->scenes.emplace_back(Scene());
 	this->scenes.emplace_back(Scene());
+	this->scenes.emplace_back(Scene());
 
 	//this->scenes.at(0).basicScene();
 	this->scenes.at(0).tryoutScene();
@@ -74,6 +75,7 @@ void App::createScenes() {
 	//this->scenes.at(1).allLightShadersTestScene();
 	this->scenes.at(2).galaxy();
 	this->scenes.at(3).forestScene();
+	this->scenes.at(4).whacAMole();
 }
 
 void App::run() {
@@ -131,6 +133,7 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
 		switch (key) {
 			case GLFW_KEY_KP_1:
 				app->currentScene = 0;
+				//app->scenes.at(app->currentScene).camera->setViewportSize(window, height);//cam will notify all shader programs about resizing
 				break;
 			case GLFW_KEY_KP_2:
 				app->currentScene = 1;
@@ -140,6 +143,9 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
 				break;
 			case GLFW_KEY_KP_4:
 				app->currentScene = 3;
+				break;
+			case GLFW_KEY_KP_5:
+				app->currentScene = 4;
 				break;
 			case GLFW_KEY_W:
 			case GLFW_KEY_A:
@@ -183,11 +189,13 @@ void App::cursor_callback(GLFWwindow* window, double x, double y) {
 void App::button_callback(GLFWwindow* window, int button, int action, int mode) {
 	if (action == GLFW_PRESS) printf("button_callback [%d,%d,%d]\n", button, action, mode);
 	App* app = (App*)glfwGetWindowUserPointer(window);
+	double x, y;
+	glfwGetCursorPos(window, &x, &y);
+
 	if (button == GLFW_MOUSE_BUTTON_RIGHT) {
 		if (action == GLFW_PRESS) {
 			app->scenes.at(app->currentScene).camera->rotating = true;
-			double x, y;
-			glfwGetCursorPos(window, &x, &y);
+
 			app->scenes.at(app->currentScene).camera->lastX = (float)x;
 			app->scenes.at(app->currentScene).camera->lastY = (float)y;
 
@@ -210,10 +218,6 @@ void App::button_callback(GLFWwindow* window, int button, int action, int mode) 
 	}
 	if (button == GLFW_MOUSE_BUTTON_LEFT) {
 		if (action == GLFW_PRESS) {
-			//TODO -> planting trees in the scene after left click
-			double x, y;
-			glfwGetCursorPos(window, &x, &y);
-
 			GLfloat depth;
 			int newy = app->scenes.at(app->currentScene).camera->getResolution().y - y;
 			glReadPixels(x, newy, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);

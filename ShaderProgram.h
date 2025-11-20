@@ -64,6 +64,11 @@ class ShaderProgram : public IObserver {
 
 		void update(ObserverSubject* s) override;
 
+		//for calculation checking
+		void printFinalMatrix(glm::mat4 view, glm::mat4 proj);
+		void printMatrix(glm::mat4& m);
+		void printVector(glm::vec4& v);
+
 		// ONLY FOR TESTING PURPOSES !!!
 		/*GLuint getId() {
 			printf( "CAREFULL getId ONLY FOR TESTING PURPOSES remove / comment out before submission of homework!!!!\n");

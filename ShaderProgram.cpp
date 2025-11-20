@@ -121,6 +121,7 @@ void ShaderProgram::setUniform(const char* name, float value) {
 void ShaderProgram::update(ObserverSubject* s) {
     //setUniform("objectColor", glm::vec4(0.385, 0.647, 0.812, 1.0));
     setUniform("shinines", float(32.0)); //change to 1.0 to visually test that the "holo" effect is/isnt present
+    //setUniform(lightPosition"); //for Lambert shader
 
     if (auto* camera = dynamic_cast<Camera*>(s)) {
         //this->useShaderProgram(); //
@@ -128,6 +129,7 @@ void ShaderProgram::update(ObserverSubject* s) {
         setUniform("viewMatrix", camera->getViewMatrix());
         setUniform("projectMatrix", camera->getProjectionMatrix());
         setUniform("camPosition", camera->eye);
+        //printFinalMatrix(camera->getViewMatrix(), camera->getProjectionMatrix());
     }
 
     if (auto* light = dynamic_cast<Light*>(s)) {
@@ -175,6 +177,53 @@ void ShaderProgram::update(ObserverSubject* s) {
         setUniform(specColString.c_str(), glm::vec4(light->specularColor));
 
         this->processedLightIndex++;
-        setUniform("numberOfLights", this->processedLightIndex);        
+        setUniform("numberOfLights", this->processedLightIndex);
+
     }
+}
+
+void ShaderProgram::printFinalMatrix(glm::mat4 view, glm::mat4 proj) {
+    //projectMatrix * viewMatrix * modelMatrix * vec4(vp * w, w); //X'= P * V * M * X;
+
+    glm::mat4 model; //model[column][row]...model matrix calculated already
+    model[0][0] = 0.5;  model[1][0] = 0;    model[2][0] = 0;    model[3][0] = 0;
+    model[0][1] = 0;    model[1][1] = 0;    model[2][1] = -0.5; model[3][1] = 0;
+    model[0][2] = 0;    model[1][2] = 0.5;  model[2][2] = 0;    model[3][2] = -2;
+    model[0][3] = 0;    model[1][3] = 0;    model[2][3] = 0;    model[3][3] = 1;
+
+    glm::mat4 finalM = proj * view * model;
+
+    float w = 500.0f; 
+    glm::vec3 vp(1, 2, 3); //test vertex point
+
+    glm::vec4 X(vp * w, w);
+    glm::vec4 Xm = finalM * X;
+
+    printf("=====================\n");
+    printf("Model matrix:\n");
+    printMatrix(model);
+    printf("View matrix:\n");
+    printMatrix(view);
+    printf("Projection matrix:\n");
+    printMatrix(proj);
+    printf("---------------------\n");
+    printf("Final matrix:\n");
+    printMatrix(finalM);
+    printf("---------------------\n");
+    printf("Test input vertex (vp * w, w):\n");
+    printVector(X);
+    printf("X modified = finalM * X :");
+    printVector(Xm);
+    printf("=====================\n");
+}
+
+void ShaderProgram::printMatrix(glm::mat4& m) {
+    for (int i = 0; i < 4; i++) {
+        printf("%.2f %.2f %.2f %.2f\n", m[0][i], m[1][i], m[2][i], m[3][i]);
+    }
+    printf("\n");
+}
+
+void ShaderProgram::printVector(glm::vec4& v) {
+    printf("%.2f %.2f %.2f %.2f\n", v[0], v[1], v[2], v[3]);
 }

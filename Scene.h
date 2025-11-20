@@ -1,11 +1,11 @@
 #pragma once
 #include "DrawableObject.h"
 #include "TransformGroup.h"
-#include "Translation.h"
 #include "Camera.h"
 #include "Light.h"
 #include "ModelManger.h"
 #include "TextureManager.h"
+#include "ShaderProgManager.h"
 
 //bcs MULTIPLE times mistakes when writing the filename :)
 //constexpr const char* VERTEX_SHADER = "vertex_shader.glsl";
@@ -29,6 +29,8 @@ public:
 
 	DrawableObject* growableTreeModel;
 
+	int score = 0;
+
 	Scene();
 	void tryoutScene();
 	void basicScene();
@@ -36,6 +38,7 @@ public:
 	void allLightShadersTestScene();
 	void forestScene();
 	void galaxy();
+	void whacAMole();
 	void addObject(DrawableObject* drawObj);
 
 	void draw();
