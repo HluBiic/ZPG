@@ -10,11 +10,11 @@ Scene::Scene() {
 		glm::vec4(0.729, 0.729, 0.949, 1.0), //spec col
 		1.0f, 0.0f, 0.0f)); //light attenuation
 
-	//redish light...[1]
+	//white light...[1]
 	this->lights.push_back(new Light(
-		glm::vec3(10.0, 10.0, 0.0),
-		glm::vec4(1.0, 0.0, 0.0, 1.0),
-		glm::vec4(0.929, 0.729, 0.729, 1.0),
+		glm::vec3(-10.0, 10.0, 0.0),
+		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
+		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
 		1.0f, 0.0f, 0.0f));
 
 	//main light for forest scene...moon high above teh scene ...[2]
@@ -110,7 +110,53 @@ void Scene::tryoutScene() {
 
 	this->addObject(new DrawableObject(sp, m4, tg4));
 	this->addObject(new DrawableObject(sp2, m4, tg5, t4));
+}
 
+void Scene::testScene() {
+	this->sceneType = "symetricalSpheres";
+	ShaderProgram* sp = ShaderProgManager::getShaderProgram(VERTEX_SHADER, MULTI_FRAGMENT_SHADER);
+	sp->setUniform("objectColor", glm::vec4(0.385, 0.647, 0.812, 1.0));
+	//sp->setUniform("objectColor", glm::vec4(1.0, 0.0, 0.0, 1.0));
+
+	this->camera->registerObserver(sp);
+	this->lights.at(1)->registerObserver(sp); //white on up right
+	//this->lights.at(13)->registerObserver(sp); //ambient green
+	//this->lights.at(14)->registerObserver(sp); //directional blue
+	//this->flashlight->registerObserver(sp);
+
+	ShaderProgram* spTexture = ShaderProgManager::getShaderProgram(VERTEX_SHADER, MULTI_FRAGMENT_SHADER);
+	this->camera->registerObserver(spTexture);
+	this->lights.at(1)->registerObserver(spTexture);
+
+
+	Model* m = new Model(sphere, size(sphere), 6);
+	Model* m2 = ModelManger::getModel("sphere.obj"); Texture* t = TextureManager::getTexture("wooden_fence.png");
+
+	TransformationComposite* tg1 = new TransformationComposite();
+	tg1->add(new Translation(glm::vec3(2.0, 0.0, 0.0)));
+	tg1->add(new Scale(glm::vec3(0.1f)));
+
+	TransformationComposite* tg2 = new TransformationComposite();
+	tg2->add(new Translation(glm::vec3(-2.0, 0.0, 0.0)));
+	tg2->add(new Scale(glm::vec3(0.1f)));
+
+	TransformationComposite* tg3 = new TransformationComposite();
+	tg3->add(new Translation(glm::vec3(0.0f, 2.0f, 0.0)));
+	tg3->add(new Scale(glm::vec3(0.1f)));
+
+	TransformationComposite* tg4 = new TransformationComposite();
+	tg4->add(new Translation(glm::vec3(0.0f, -2.0f, 0.0f)));
+	tg4->add(new Scale(glm::vec3(0.1f)));
+
+	sp->setUniform("useTexture", 0);
+	this->objects.push_back(new DrawableObject(sp, m, tg1));
+	this->objects.push_back(new DrawableObject(sp, m, tg2));
+	this->objects.push_back(new DrawableObject(sp, m, tg3));
+	
+	spTexture->setUniform("useTexture", 1);
+	this->objects.push_back(new DrawableObject(spTexture, m2, tg4, t)); //textured one
+
+	
 }
 
 //LAB 05 - TASK 3a - simple static triangle
@@ -190,14 +236,16 @@ void Scene::symetricalSpheresScene() {
 //LAB 05 - TASK 3c - forest with bushes and ground
 void Scene::forestScene() {
 	this->sceneType = "forest";
-	ShaderProgram* sp = ShaderProgManager::getShaderProgram(VERTEX_SHADER, PHONG_CORRECT_FRAGMENT_SHADER);
+	ShaderProgram* sp = ShaderProgManager::getShaderProgram(VERTEX_SHADER, MULTI_FRAGMENT_SHADER); //PHONG CORRECT
 	sp->setUniform("objectColor", glm::vec4(0.385, 0.647, 0.812, 1.0));
+	//sp->setUniform("objectColor", glm::vec4(1.0, 0.0, 0.0, 1.0));
 
 	this->growableTreeModel->shaderProgram = sp;
 
 	this->camera->registerObserver(sp);
 
 	this->lights.at(2)->registerObserver(sp); //moon/sun
+	//this->lights.at(13)->registerObserver(sp); //ambient light for testing
 	for (int i = 3; i < 13; i++) { //fireflies
 		this->lights.at(i)->registerObserver(sp);
 	}
@@ -267,12 +315,19 @@ void Scene::forestScene() {
 		this->objects.push_back(new DrawableObject(spFirefly, firefly, tgFirefly));
 	}
 
-	//------------------GROUND------------------------------------------
+	//------------------TERAIN------------------------------------------
 	/*Shader* f = new Shader();
 	f->createShaderFromFile(GL_FRAGMENT_SHADER, TEXTURE_FRAGMENT_SHADER);*/
-	ShaderProgram* fsdfaa = ShaderProgManager::getShaderProgram(VERTEX_SHADER, TEXTURE_FRAGMENT_SHADER);
+	ShaderProgram* fsdfaa = ShaderProgManager::getShaderProgram(VERTEX_SHADER, MULTI_FRAGMENT_SHADER);
+	fsdfaa->setUniform("useTexture", 1);
 
-	this->camera->registerObserver(fsdfaa);
+	this->camera->registerObserver(fsdfaa); //need to register so shader would "act upon" all lights
+	this->flashlight->registerObserver(fsdfaa);
+	this->lights.at(2)->registerObserver(fsdfaa); //moon/sun
+	for (int i = 3; i < 13; i++) { //fireflies
+		this->lights.at(i)->registerObserver(fsdfaa);
+	}
+	this->flashlight->registerObserver(fsdfaa);
 
 	Model* ground = ModelManger::getModel("teren.obj"); Texture* grassText = TextureManager::getTexture("grass.png");
 	TransformationComposite* tgGround = new TransformationComposite();
@@ -280,7 +335,6 @@ void Scene::forestScene() {
 	tgGround->add(new Scale(glm::vec3(0.08f)));
 
 	this->addObject(new DrawableObject(fsdfaa, ground, tgGround, grassText));
-
 	//------------------BACKGROUDN------------------------------------------
 
 	Model* skyDome = ModelManger::getModel("skydome.obj");
@@ -310,7 +364,7 @@ void Scene::forestScene() {
 	this->addObject(new DrawableObject(fsdfaa, fiona, tgFiona, texFiona));
 }
 
-//LAB 05 - TASK 3d - solar system scene prep
+//LAB 05 - TASK 3d - solar system scene
 void Scene::galaxy() {
 	this->sceneType = "galaxy";
     /*Shader* vertexShader = new Shader();
@@ -326,13 +380,8 @@ void Scene::galaxy() {
 
     //Model* sun = new Model(sphere, size(sphere), 6);
 	Model* planet = ModelManger::getModel("sphere.obj");
-	//Model* space = ModelManger::getModel("cube.obj");
 	Texture* sunTex = TextureManager::getTexture("sun.png");
-    //Model* earth = new Model(sphere, size(sphere), 6);
-	//Model* earth = ModelManger::getModel("sphere.obj");
 	Texture* earthTex = TextureManager::getTexture("earth.png");
-    //Model* moon = new Model(sphere, size(sphere), 6);
-	//Model* moon = ModelManger::getModel("sphere.obj");
 	Texture* moonTex = TextureManager::getTexture("moon.png");
 	Texture* venuTex = TextureManager::getTexture("venus.png");
 	Texture* mercTex = TextureManager::getTexture("mercury.png");

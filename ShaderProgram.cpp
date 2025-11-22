@@ -138,6 +138,7 @@ void ShaderProgram::update(ObserverSubject* s) {
         setUniform(lightTypeString.c_str(), light->type);
 
         string lightPosString = "lights[" + to_string(this->processedLightIndex) + "].position";
+        string ambColString = "lights[" + to_string(this->processedLightIndex) + "].ambientColor";
         string diffColString = "lights[" + to_string(this->processedLightIndex) + "].diffuseColor";
         string specColString = "lights[" + to_string(this->processedLightIndex) + "].specularColor";
         string attConstString = "lights[" + to_string(this->processedLightIndex) + "].attenConst";
@@ -155,7 +156,8 @@ void ShaderProgram::update(ObserverSubject* s) {
                 setUniform(attLinearlString.c_str(), light->attenLinear);
                 setUniform(attQuadString.c_str(), light->attenQuadric);
                 break;
-            case LightType::AMBIENT: //only diffuse + spec col, no pos or attenuation
+            case LightType::AMBIENT:
+                setUniform(ambColString.c_str(), light->ambientColor);
                 break;
             case LightType::DIRECTIONAL:
                 setUniform(lightDirString.c_str(), light->lightDirecton);

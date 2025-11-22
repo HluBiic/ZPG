@@ -10,8 +10,8 @@ Light::Light(glm::vec3 position, glm::vec4 diffCol, glm::vec4 specCol, float att
 	this->type = LightType::POINT;
 }
 
-Light::Light(glm::vec4 diffCol) {
-	this->diffuseColor = diffCol;
+Light::Light(glm::vec4 ambientCol) {
+	this->ambientColor = ambientCol;
 	this->type = LightType::AMBIENT;
 }
 

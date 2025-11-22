@@ -70,7 +70,8 @@ void App::createScenes() {
 	this->scenes.emplace_back(Scene());
 
 	//this->scenes.at(0).basicScene();
-	this->scenes.at(0).tryoutScene();
+	//this->scenes.at(0).tryoutScene();
+	this->scenes.at(0).testScene();
 	this->scenes.at(1).symetricalSpheresScene();
 	//this->scenes.at(1).allLightShadersTestScene();
 	this->scenes.at(2).galaxy();

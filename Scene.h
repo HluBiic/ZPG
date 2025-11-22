@@ -9,7 +9,6 @@
 
 //bcs MULTIPLE times mistakes when writing the filename :)
 //constexpr const char* VERTEX_SHADER = "vertex_shader.glsl";
-constexpr const char* TEXTURE_VERTEX_SHADER = "texture_vertex_shader.glsl";
 //constexpr const char* CONSTANT_FRAGMENT_SHADER = "constant_fragment_shader.glsl";
 constexpr const char* LAMBERT_FRAGMENT_SHADER = "lambert_fragment_shader.glsl";
 constexpr const char* PHONG_CORRECT_FRAGMENT_SHADER = "phong_correct_fragment_shader.glsl";
@@ -34,6 +33,7 @@ public:
 
 	Scene();
 	void tryoutScene();
+	void testScene();
 	void basicScene();
 	void symetricalSpheresScene();
 	void forestScene();
@@ -47,6 +47,5 @@ public:
 
 	void setInactiveDrawObj(int id);
 	void growNewTree(glm::vec3 position);
-	// 0 - freddy, 1 - shrek, 2 - title
 	void spawnNewMole(int type);
 };
