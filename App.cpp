@@ -70,8 +70,8 @@ void App::createScenes() {
 	this->scenes.emplace_back(Scene());
 
 	//this->scenes.at(0).basicScene();
-	//this->scenes.at(0).tryoutScene();
-	this->scenes.at(0).testScene();
+	this->scenes.at(0).tryoutScene();
+	//this->scenes.at(0).testScene();
 	this->scenes.at(1).symetricalSpheresScene();
 	//this->scenes.at(1).allLightShadersTestScene();
 	this->scenes.at(2).galaxy();
@@ -124,7 +124,7 @@ void App::error_callback(int error, const char* description) {
 void App::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
-	printf("key_callback [%d,%d,%d,%d] \n", key, scancode, action, mods);
+	//printf("key_callback [%d,%d,%d,%d] \n", key, scancode, action, mods);
 	//scene switchinch via 1-3 numerical keys + cam moving with wasd
 
 	App* app = (App*)glfwGetWindowUserPointer(window); // retrieve the app instance to access the scene index 

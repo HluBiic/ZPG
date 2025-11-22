@@ -4,6 +4,7 @@
 #include "TransformationComponent.h"
 #include "Rotation.h"
 #include "Scale.h"
+#include "ParametricLine.h"
 #include "RandMovement.h"
 #include "Translation.h"
 #include "WCustomTransform.h"

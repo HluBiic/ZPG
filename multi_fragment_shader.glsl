@@ -70,7 +70,7 @@ vec4 calculateDiffuse(vec4 lightDiffCol, vec3 vectorL, vec3 vectorN) {
 //Is = max ( dot ( reflect ( light , normal ) , camera ) , 0.0); // Lecture 05 - page 20
 vec4 calculateSpecular(vec3 camPos, vec4 worldPos, vec3 vectorL, vec3 vectorN, float shinines, vec4 lightSpecCol) {
 	float spec = 0.0;
-	vec3 vectorC = normalize((worldPosition.xyz / worldPosition.w) - camPosition); //vector from point to cam position
+	vec3 vectorC = normalize((worldPosition.xyz / worldPosition.w) - camPosition);
 	spec = pow(max(dot(reflect(vectorL, vectorN), vectorC), 0.0), shinines);
 	
 	float cosVal = 0.0;

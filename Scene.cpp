@@ -3,11 +3,11 @@
 Scene::Scene() {
 	this->camera = new Camera();
 
-	//blueish light...[0]
+	//white light middle...[0]
 	this->lights.push_back(new Light(
-		glm::vec3(50.0, 50.0, 0.0), //pos
-		glm::vec4(0.0, 0.0, 1.0, 1.0), //diff col
-		glm::vec4(0.729, 0.729, 0.949, 1.0), //spec col
+		glm::vec3(0.0, 0.0, 0.0), //pos
+		glm::vec4(1.0, 1.0, 1.0, 1.0), //diff col
+		glm::vec4(1.0, 1.0, 1.0, 1.0), //spec col
 		1.0f, 0.0f, 0.0f)); //light attenuation
 
 	//white light...[1]
@@ -19,9 +19,9 @@ Scene::Scene() {
 
 	//main light for forest scene...moon high above teh scene ...[2]
 	this->lights.push_back(new Light(
-		glm::vec3(20.0f, 20.0f, 0.0f),
+		glm::vec3(0.0f, 20.0f, 0.0f),
 		glm::vec4(0.8f, 0.8f, 1.0f, 1.0f),
-		glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
+		glm::vec4(0.0f, 0.0f, 0.0f, 1.0f),
 		1.0f, 0.0f, 0.01f));
 
 	//firefflies for the forest scene...scatterred arround the forest...[3-12]
@@ -77,7 +77,7 @@ void Scene::tryoutScene() {
 	this->camera->registerObserver(sp);
 
 	sp->setUniform("objectColor", glm::vec4(1, 0, 0, 1.0));
-	sp->setUniform("lightPosition", this->lights.at(0)->lightPosition); //for Lambert shader
+	sp->setUniform("lightPosition", this->lights.at(1)->lightPosition); //for Lambert shader
 
 	//so that if a tree is grown inside of a scene with specific lights it has those light as well
 	this->lights.at(0)->registerObserver(this->growableTreeModel->shaderProgram); 
@@ -85,12 +85,12 @@ void Scene::tryoutScene() {
 	//FOR TESTING PURPOSES
 	sp->setUniform("camPosition", this->camera->eye);
 	sp->setUniform("shinines", 32.0f);
-	sp->setUniform("specularColor", this->lights.at(0)->specularColor);
-	ShaderProgManager::registerAllObservers(sp, this->camera, this->lights.at(0));
+	sp->setUniform("specularColor", this->lights.at(1)->specularColor);
+	ShaderProgManager::registerAllObservers(sp, this->camera, this->lights.at(1));
 	//this->camera->registerObserver(sp);
 	//this->lights.at(0)->registerObserver(sp);
 
-	Model* m4 = ModelManger::getModel("sphere.obj");
+	Model* m4 = ModelManger::getModel("new_sphere.obj");
 
 	Texture* t3 = TextureManager::getTexture("grass.png");
 	Texture* t2 = TextureManager::getTexture("wooden_fence.png");
@@ -98,15 +98,15 @@ void Scene::tryoutScene() {
 
 
 	ShaderProgram* sp2 = ShaderProgManager::getShaderProgram(VERTEX_SHADER, MULTI_FRAGMENT_SHADER);
-
-	ShaderProgManager::registerAllObservers(sp2, this->camera, this->lights.at(0));
+	sp2->setUniform("useTexture", 1);
+	ShaderProgManager::registerAllObservers(sp2, this->camera, this->lights.at(1));
 	//this->camera->registerObserver(sp2);
 	//this->lights.at(0)->registerObserver(sp2);
 
 	TransformationComposite* tg4 = new TransformationComposite();
 
 	TransformationComposite* tg5 = new TransformationComposite();
-	tg5->add(new Translation(glm::vec3(0.0f, 0.0f, -2.0f)));
+	tg5->add(new ParametricLine(glm::vec3(5.0, 0.0, 0.0), glm::vec3(-5.0, -5.0, -5.0), 0.5));
 
 	this->addObject(new DrawableObject(sp, m4, tg4));
 	this->addObject(new DrawableObject(sp2, m4, tg5, t4));
@@ -130,7 +130,7 @@ void Scene::testScene() {
 
 
 	Model* m = new Model(sphere, size(sphere), 6);
-	Model* m2 = ModelManger::getModel("sphere.obj"); Texture* t = TextureManager::getTexture("wooden_fence.png");
+	Model* m2 = ModelManger::getModel("new_sphere.obj"); Texture* t = TextureManager::getTexture("wooden_fence.png");
 
 	TransformationComposite* tg1 = new TransformationComposite();
 	tg1->add(new Translation(glm::vec3(2.0, 0.0, 0.0)));
@@ -372,14 +372,18 @@ void Scene::galaxy() {
     Shader* fragmentShader = new Shader();
     //fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, PHONG_CORRECT_FRAGMENT_SHADER);
 	fragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, TEXTURE_FRAGMENT_SHADER);*/
-	ShaderProgram* sp = ShaderProgManager::getShaderProgram(VERTEX_SHADER, TEXTURE_FRAGMENT_SHADER);
-	sp->setUniform("objectColor", glm::vec4(0.385, 0.647, 0.812, 1.0));
+	ShaderProgram* spSun = ShaderProgManager::getShaderProgram(VERTEX_SHADER, TEXTURE_FRAGMENT_SHADER);
+	spSun->setUniform("objectColor", glm::vec4(0.385, 0.647, 0.812, 1.0));
+    this->camera->registerObserver(spSun);
+    this->lights.at(0)->registerObserver(spSun);
 
-    this->camera->registerObserver(sp);
-    this->lights.at(0)->registerObserver(sp);
+	ShaderProgram* spPlanets = ShaderProgManager::getShaderProgram(VERTEX_SHADER, MULTI_FRAGMENT_SHADER);
+	spPlanets->setUniform("useTexture", 1);
+	this->camera->registerObserver(spPlanets);
+	this->lights.at(0)->registerObserver(spPlanets);
 
     //Model* sun = new Model(sphere, size(sphere), 6);
-	Model* planet = ModelManger::getModel("sphere.obj");
+	Model* planet = ModelManger::getModel("new_sphere.obj");
 	Texture* sunTex = TextureManager::getTexture("sun.png");
 	Texture* earthTex = TextureManager::getTexture("earth.png");
 	Texture* moonTex = TextureManager::getTexture("moon.png");
@@ -432,18 +436,21 @@ void Scene::galaxy() {
 	TransformationComposite* tgBack = new TransformationComposite();
 	tgBack->add(new Scale(glm::vec3(10.0f)));
 
-    this->objects.push_back(new DrawableObject(sp, planet, tgSun, sunTex));
-	this->objects.push_back(new DrawableObject(sp, planet, tgEarth, earthTex));
-	this->objects.push_back(new DrawableObject(sp, planet, tgMoon, moonTex));
-	this->objects.push_back(new DrawableObject(sp, planet, tgVenus, venuTex));
-	this->objects.push_back(new DrawableObject(sp, planet, tgMercury, mercTex));
-	this->objects.push_back(new DrawableObject(sp, planet, tgBack, starsTex));
+    this->objects.push_back(new DrawableObject(spSun, planet, tgSun, sunTex));
+	this->objects.push_back(new DrawableObject(spPlanets, planet, tgEarth, earthTex));
+	this->objects.push_back(new DrawableObject(spPlanets, planet, tgMoon, moonTex));
+	this->objects.push_back(new DrawableObject(spPlanets, planet, tgVenus, venuTex));
+	this->objects.push_back(new DrawableObject(spPlanets, planet, tgMercury, mercTex));
+	this->objects.push_back(new DrawableObject(spPlanets, planet, tgBack, starsTex));
 }
 
 void Scene::whacAMole() {
 	this->sceneType = "whacamole";
-	ShaderProgram* sp = ShaderProgManager::getShaderProgram(VERTEX_SHADER, TEXTURE_FRAGMENT_SHADER);
+	ShaderProgram* sp = ShaderProgManager::getShaderProgram(VERTEX_SHADER, MULTI_FRAGMENT_SHADER);
 	ShaderProgManager::registerAllObservers(sp, this->camera, this->flashlight);
+	this->lights.at(2)->registerObserver(sp);//2
+
+	sp->setUniform("useTexture", 1);
 	//------------------GROUND------------------------------------------
 	this->camera->registerObserver(sp);
 	Model* ground = ModelManger::getModel("teren.obj"); Texture* grassText = TextureManager::getTexture("grass.png");
@@ -548,7 +555,7 @@ void Scene::setInactiveDrawObj(int id) {
 			if (name != "plain" && name != "skydome" && name != "teren") {
 				//o->visible = false;
 				this->objects.erase(remove(this->objects.begin(), this->objects.end(), o), this->objects.end());// removing by the object
-				printf("removing object: %s\n", o->model->modelName.c_str());
+				//printf("removing object: %s\n", o->model->modelName.c_str());
 
 				//get points in the whacamole for clicking on freddy
 				if (o->model->modelName == "meme_glamrock_freddy.obj") {
@@ -562,7 +569,7 @@ void Scene::setInactiveDrawObj(int id) {
 					printf("\t\t\t\t\t\tYOU WHACKED zpg title \t [Mythic] +99 points \tScore: %d\n", this->score);
 				}
 			} else {
-				printf("cannot remove object: %s\n", o->model->modelName.c_str());
+				//printf("cannot remove object: %s\n", o->model->modelName.c_str());
 			}
 		}
 	}

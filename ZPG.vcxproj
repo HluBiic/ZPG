@@ -139,6 +139,7 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ModelManger.cpp" />
     <ClCompile Include="ObserverSubject.cpp" />
+    <ClCompile Include="ParametricLine.cpp" />
     <ClCompile Include="RandMovement.cpp" />
     <ClCompile Include="Rotation.cpp" />
     <ClCompile Include="Scale.cpp" />
@@ -165,6 +166,7 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="ModelManger.h" />
     <ClInclude Include="ObserverSubject.h" />
+    <ClInclude Include="ParametricLine.h" />
     <ClInclude Include="plain.h" />
     <ClInclude Include="RandMovement.h" />
     <ClInclude Include="Shader.h" />
