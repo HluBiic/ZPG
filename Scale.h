@@ -1,7 +1,7 @@
 #pragma once
-#include "Transformation.h"
+#include "TransformationComponent.h"
 
-class Scale : public Transformation {
+class Scale : public TransformationComponent {
 private:
 	glm::vec3 scaleVect;
 public:

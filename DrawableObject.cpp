@@ -2,7 +2,7 @@
 
 int DrawableObject::IDCounter = 0;
 
-DrawableObject::DrawableObject(ShaderProgram* sp, Model* m, Transformation* t) {
+DrawableObject::DrawableObject(ShaderProgram* sp, Model* m, TransformationComposite* t) {
 	this->shaderProgram = sp;
 	this->model = m;
 	this->transformation = t;
@@ -11,7 +11,7 @@ DrawableObject::DrawableObject(ShaderProgram* sp, Model* m, Transformation* t) {
 	this->visible = true;
 }
 
-DrawableObject::DrawableObject(ShaderProgram* sp, Model* m, Transformation* t, Texture* tx) {
+DrawableObject::DrawableObject(ShaderProgram* sp, Model* m, TransformationComposite* t, Texture* tx) {
 	this->shaderProgram = sp;
 	this->model = m;
 	this->transformation = t;

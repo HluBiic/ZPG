@@ -154,7 +154,6 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
 				app->scenes.at(app->currentScene).camera->move(key);
 				break;
 			case GLFW_KEY_F:
-				//TODO -> toggle flashligh on/off
 				int isEnabled = app->scenes.at(app->currentScene).flashlight->flashlightEnabled;
 				if (isEnabled == 1) {
 					app->scenes.at(app->currentScene).flashlight->flashlightEnabled = 0;
@@ -187,7 +186,7 @@ void App::cursor_callback(GLFWwindow* window, double x, double y) {
 }
 
 void App::button_callback(GLFWwindow* window, int button, int action, int mode) {
-	if (action == GLFW_PRESS) printf("button_callback [%d,%d,%d]\n", button, action, mode);
+	//if (action == GLFW_PRESS); printf("button_callback [%d,%d,%d]\n", button, action, mode);
 	App* app = (App*)glfwGetWindowUserPointer(window);
 	double x, y;
 	glfwGetCursorPos(window, &x, &y);
@@ -207,7 +206,7 @@ void App::button_callback(GLFWwindow* window, int button, int action, int mode) 
 			glReadPixels(x, newy, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, color);
 			glReadPixels(x, newy, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
 			glReadPixels(x, newy, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &index);
-			printf("Clicked on pixel %g, %g, color %02hhx%02hhx%02hhx%02hhx, depth %f, stencil index %u\n", x, y, color[0], color[1], color[2], color[3], depth, index);
+			//printf("Clicked on pixel %g, %g, color %02hhx%02hhx%02hhx%02hhx, depth %f, stencil index %u\n", x, y, color[0], color[1], color[2], color[3], depth, index);
 			//%g supresses tailing zeros so 123.000 -> 123
 
 			app->scenes.at(app->currentScene).setInactiveDrawObj(index);
@@ -225,7 +224,6 @@ void App::button_callback(GLFWwindow* window, int button, int action, int mode) 
 			glm::vec3 screenX = glm::vec3(x, newy, depth);
 			glm::mat4 view = app->scenes.at(app->currentScene).camera->getViewMatrix();
 			glm::mat4 projection = app->scenes.at(app->currentScene).camera->getProjectionMatrix();
-			//glm::vec4 viewPort = glm::vec4(0, 0, getResolution().x, getResolution().y);
 			glm::vec2 camResolution = app->scenes.at(app->currentScene).camera->getResolution();
 			glm::vec4 viewPort = glm::vec4(0, 0, camResolution.x, camResolution.y);
 			glm::vec3 pos = glm::unProject(screenX, view, projection, viewPort);

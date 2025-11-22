@@ -5,10 +5,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-// Base component of the Composite (abstract base cls)
-class Transformation {
+//component from the Composite design pattern
+class TransformationComponent {
 private:
-
 public:
 	virtual glm::mat4 apply() = 0;
 };

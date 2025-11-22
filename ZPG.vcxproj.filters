@@ -27,9 +27,6 @@
     <ClCompile Include="App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Transformation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DrawableObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -39,7 +36,7 @@
     <ClCompile Include="Rotation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TransformGroup.cpp">
+    <ClCompile Include="TransformationComposite.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Scale.cpp">
@@ -84,6 +81,9 @@
     <ClCompile Include="RandMovement.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShaderProgram.h">
@@ -95,7 +95,7 @@
     <ClInclude Include="App.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Transformation.h">
+    <ClInclude Include="TransformationComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DrawableObject.h">
@@ -107,7 +107,7 @@
     <ClInclude Include="Rotation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TransformGroup.h">
+    <ClInclude Include="TransformationComposite.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Scale.h">
@@ -179,6 +179,9 @@
     <ClInclude Include="RandMovement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="phong_incorrect_fragment_shader.glsl">
@@ -200,6 +203,9 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="texture_fragment_shader.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="multi_fragment_shader.glsl">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

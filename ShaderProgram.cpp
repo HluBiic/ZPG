@@ -68,7 +68,7 @@ void ShaderProgram::setUniform(const char* name, const glm::mat4& matrix) {
     this->useShaderProgram();
     GLint idModelTransform = glGetUniformLocation(this->id, name);
     if (idModelTransform == -1) {
-        //printf("%s not found!\n", name);
+        printf("%s not found!\n", name);
         //exit(1);
     }
     glUniformMatrix4fv(idModelTransform, 1, GL_FALSE, glm::value_ptr(matrix));
@@ -82,7 +82,7 @@ void ShaderProgram::setUniform(const char* name, const glm::vec3& camPosVector) 
     this->useShaderProgram();
     GLint idModelTransform = glGetUniformLocation(this->id, name);
     if (idModelTransform == -1) {
-        //printf("%s not found!\n", name);
+        printf("%s not found!\n", name);
         //exit(1);
     }
     glUniform3fv(idModelTransform, 1, glm::value_ptr(camPosVector));
@@ -92,7 +92,7 @@ void ShaderProgram::setUniform(const char* name, const glm::vec4& vec) {
     this->useShaderProgram();
     GLint idModelTransform = glGetUniformLocation(this->id, name);
     if (idModelTransform == -1) {
-        //printf("%s not found!\n", name);
+        printf("%s not found!\n", name);
         //exit(1);
     }
     glUniform4fv(idModelTransform, 1, glm::value_ptr(vec));
@@ -102,7 +102,7 @@ void ShaderProgram::setUniform(const char* name, int value) {
     this->useShaderProgram();
     GLint idModelTransform = glGetUniformLocation(this->id, name);
     if (idModelTransform == -1) {
-        //printf("%s not found!\n", name);
+        printf("%s not found!\n", name);
         //exit(1);
     }
     glUniform1i(idModelTransform, value); //for passing a single int
@@ -112,7 +112,7 @@ void ShaderProgram::setUniform(const char* name, float value) {
     this->useShaderProgram();
     GLint idModelTransform = glGetUniformLocation(this->id, name);
     if (idModelTransform == -1) {
-        //printf("%s not found!\n", name);
+        printf("%s not found!\n", name);
         //exit(1);
     }
     glUniform1f(idModelTransform, value); //for passing a float

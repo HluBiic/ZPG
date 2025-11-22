@@ -1,6 +1,6 @@
 #pragma once
 #include "DrawableObject.h"
-#include "TransformGroup.h"
+#include "TransformationComposite.h"
 #include "Camera.h"
 #include "Light.h"
 #include "ModelManger.h"
@@ -16,7 +16,7 @@ constexpr const char* PHONG_CORRECT_FRAGMENT_SHADER = "phong_correct_fragment_sh
 constexpr const char* PHONG_INCORRECT_FRAGMENT_SHADER = "phong_incorrect_fragment_shader.glsl";
 constexpr const char* BLINN_FRAGMENT_SHADER = "blinn_fragment_shader.glsl";
 constexpr const char* TEXTURE_FRAGMENT_SHADER = "texture_fragment_shader.glsl";
-
+constexpr const char* MULTI_FRAGMENT_SHADER = "multi_fragment_shader.glsl";
 
 class Scene {
 private:
@@ -30,12 +30,12 @@ public:
 	DrawableObject* growableTreeModel;
 
 	int score = 0;
+	string sceneType;
 
 	Scene();
 	void tryoutScene();
 	void basicScene();
 	void symetricalSpheresScene();
-	void allLightShadersTestScene();
 	void forestScene();
 	void galaxy();
 	void whacAMole();
@@ -47,4 +47,6 @@ public:
 
 	void setInactiveDrawObj(int id);
 	void growNewTree(glm::vec3 position);
+	// 0 - freddy, 1 - shrek, 2 - title
+	void spawnNewMole(int type);
 };

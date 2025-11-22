@@ -1,9 +1,9 @@
 #pragma once
 #include <GLFW/glfw3.h>
 
-#include "Transformation.h"
+#include "TransformationComponent.h"
 
-class Spin : public Transformation {
+class Spin : public TransformationComponent {
 private:
 	float angle;
 	float spinRate; //in degrees per second
@@ -13,4 +13,3 @@ public:
 	glm::mat4 apply() override;
 	void setAngle(float angle);
 };
-

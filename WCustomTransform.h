@@ -1,7 +1,7 @@
 #pragma once
-#include "Transformation.h"
+#include "TransformationComponent.h"
 
-class WCustomTransform : public Transformation {
+class WCustomTransform : public TransformationComponent {
 private:
 	float w;
 public:

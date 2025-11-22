@@ -1,9 +1,9 @@
 #pragma once
 #include <GLFW/glfw3.h>
 
-#include "Transformation.h"
+#include "TransformationComponent.h"
 
-class Rotation : public Transformation {
+class Rotation : public TransformationComponent {
 private:
 	float angle;
 	glm::vec3 axis;

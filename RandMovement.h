@@ -1,10 +1,10 @@
 #pragma once
 #include <GLFW/glfw3.h>
-#include "Transformation.h"
+#include "TransformationComponent.h"
 
 using namespace glm;
 
-class RandMovement : public Transformation {
+class RandMovement : public TransformationComponent {
 private:
 	float speed;
 	vec3 min;
