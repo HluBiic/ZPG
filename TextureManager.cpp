@@ -8,8 +8,7 @@ Texture* TextureManager::getTexture(const char* name) {
 	if (item != TextureManager::textures.end()) {
 		printf("Texture %s already loaded\n", name);
 		return item->second;
-	}
-	else {
+	} else {
 		Texture* t = new Texture(name);
 		TextureManager::textures[name] = t;
 		printf("Texture %s loaded first time\n", name);

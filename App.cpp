@@ -154,6 +154,28 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
 			case GLFW_KEY_D:
 				app->scenes.at(app->currentScene).camera->move(key);
 				break;
+			case GLFW_KEY_R:
+				if (app->deleteToggled) {
+					app->deleteToggled = false;
+					printf("DELETE MODE OFF\n");
+				} else {
+					app->deleteToggled = true;
+					printf("DELETE MODE ON\n");
+				}
+				break;
+			case GLFW_KEY_B:
+				if (app->pathingToggled) {
+					app->pathingToggled = false;
+					printf("BEZIER POINTS MODE OFF\n");
+					app->scenes.at(app->currentScene).printAllBezierPoints();
+					app->scenes.at(app->currentScene).cropBezierPoints();
+					app->scenes.at(app->currentScene).printAllBezierPoints();
+					app->scenes.at(app->currentScene).bezierPoints.clear();
+				} else {
+					app->pathingToggled = true;
+					printf("BEZIER POINTS MODE ON\n");
+				}
+				break;
 			case GLFW_KEY_F:
 				int isEnabled = app->scenes.at(app->currentScene).flashlight->flashlightEnabled;
 				if (isEnabled == 1) {
@@ -162,6 +184,7 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
 					app->scenes.at(app->currentScene).flashlight->flashlightEnabled = 1;
 				}
 				break;
+
 		}
 	}
 }
@@ -199,18 +222,21 @@ void App::button_callback(GLFWwindow* window, int button, int action, int mode) 
 			app->scenes.at(app->currentScene).camera->lastX = (float)x;
 			app->scenes.at(app->currentScene).camera->lastY = (float)y;
 
-			//object deleting after right click
-			GLbyte color[4];
-			GLfloat depth;
-			GLuint index;
-			int newy = app->scenes.at(app->currentScene).camera->getResolution().y - y;
-			glReadPixels(x, newy, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, color);
-			glReadPixels(x, newy, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-			glReadPixels(x, newy, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &index);
-			//printf("Clicked on pixel %g, %g, color %02hhx%02hhx%02hhx%02hhx, depth %f, stencil index %u\n", x, y, color[0], color[1], color[2], color[3], depth, index);
-			//%g supresses tailing zeros so 123.000 -> 123
+			if (app->deleteToggled) { //only after "R" was pressed previously
+				//object deleting after right click
+				GLbyte color[4];
+				GLfloat depth;
+				GLuint index;
+				int newy = app->scenes.at(app->currentScene).camera->getResolution().y - y;
+				glReadPixels(x, newy, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, color);
+				glReadPixels(x, newy, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+				glReadPixels(x, newy, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &index);
+				//printf("Clicked on pixel %g, %g, color %02hhx%02hhx%02hhx%02hhx, depth %f, stencil index %u\n", x, y, color[0], color[1], color[2], color[3], depth, index);
+				//%g supresses tailing zeros so 123.000 -> 123
 
-			app->scenes.at(app->currentScene).setInactiveDrawObj(index);
+				app->scenes.at(app->currentScene).setInactiveDrawObj(index);
+			}
+
 		}
 		else if (action == GLFW_RELEASE) {
 			app->scenes.at(app->currentScene).camera->rotating = false;
@@ -218,6 +244,7 @@ void App::button_callback(GLFWwindow* window, int button, int action, int mode) 
 	}
 	if (button == GLFW_MOUSE_BUTTON_LEFT) {
 		if (action == GLFW_PRESS) {
+
 			GLfloat depth;
 			int newy = app->scenes.at(app->currentScene).camera->getResolution().y - y;
 			glReadPixels(x, newy, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
@@ -228,9 +255,13 @@ void App::button_callback(GLFWwindow* window, int button, int action, int mode) 
 			glm::vec2 camResolution = app->scenes.at(app->currentScene).camera->getResolution();
 			glm::vec4 viewPort = glm::vec4(0, 0, camResolution.x, camResolution.y);
 			glm::vec3 pos = glm::unProject(screenX, view, projection, viewPort);
-			printf("unProject [%f,%f,%f]\n", pos.x, pos.y, pos.z);
+			//printf("unProject [%f,%f,%f]\n", pos.x, pos.y, pos.z);
 
-			app->scenes.at(app->currentScene).growNewTree(pos);
+			if (!app->pathingToggled) {
+				app->scenes.at(app->currentScene).growNewTree(pos);
+			} else {
+				app->scenes.at(app->currentScene).bezierPoints.push_back(pos);
+			}
 		}
 	}
 }

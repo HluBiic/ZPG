@@ -60,6 +60,7 @@ Scene::Scene() {
 	spGrow->setUniform("objectColor", glm::vec4(0.385, 0.647, 0.812, 1.0));
 	this->camera->registerObserver(spGrow);
 	this->flashlight->registerObserver(spGrow);
+	this->lights.at(2)->registerObserver(spGrow);
 
 	this->growableTreeModel = new DrawableObject(
 		spGrow,
@@ -67,6 +68,12 @@ Scene::Scene() {
 		new TransformationComposite()
 	);
 	srand(time(0));
+
+	//moved as general sp for all moles so it wouldnt be compiled each time we spawn a new mole but we use only this one
+	this->spNewMoles = ShaderProgManager::getShaderProgram(VERTEX_SHADER, MULTI_FRAGMENT_SHADER);
+	ShaderProgManager::registerAllObservers(this->spNewMoles, this->camera, this->flashlight);
+	this->lights.at(2)->registerObserver(this->spNewMoles);
+	this->spNewMoles->setUniform("useTexture", 1);
 }
 
 void Scene::tryoutScene() {
@@ -106,7 +113,8 @@ void Scene::tryoutScene() {
 	TransformationComposite* tg4 = new TransformationComposite();
 
 	TransformationComposite* tg5 = new TransformationComposite();
-	tg5->add(new ParametricLine(glm::vec3(5.0, 0.0, 0.0), glm::vec3(-5.0, -5.0, -5.0), 0.5));
+	tg5->add(new WCustomTransform(20.0f));
+	tg5->add(new Translation(glm::vec3(-2.0f, 0.0f, 0.0f)));
 
 	this->addObject(new DrawableObject(sp, m4, tg4));
 	this->addObject(new DrawableObject(sp2, m4, tg5, t4));
@@ -381,6 +389,7 @@ void Scene::galaxy() {
 	spPlanets->setUniform("useTexture", 1);
 	this->camera->registerObserver(spPlanets);
 	this->lights.at(0)->registerObserver(spPlanets);
+	this->lights.at(2)->registerObserver(spPlanets);
 
     //Model* sun = new Model(sphere, size(sphere), 6);
 	Model* planet = ModelManger::getModel("new_sphere.obj");
@@ -406,7 +415,7 @@ void Scene::galaxy() {
 	//------------------VENUS------------------------------------------
 	TransformationComposite* tgVenus = new TransformationComposite();
 	tgVenus->add(new Scale(glm::vec3(0.4f)));
-	tgVenus->add(new Spin(10.0f, glm::vec3(0, 1, 0)));
+	tgVenus->add(new Spin(1000.0f, glm::vec3(0, 1, 0)));
 
 	//orbit around sun - 0,0,0
 	tgVenus->add(new Translation(glm::vec3(4.0f, 0.0f, 0.0f))); //distance venus-sun
@@ -441,7 +450,7 @@ void Scene::galaxy() {
 	this->objects.push_back(new DrawableObject(spPlanets, planet, tgMoon, moonTex));
 	this->objects.push_back(new DrawableObject(spPlanets, planet, tgVenus, venuTex));
 	this->objects.push_back(new DrawableObject(spPlanets, planet, tgMercury, mercTex));
-	this->objects.push_back(new DrawableObject(spPlanets, planet, tgBack, starsTex));
+	this->objects.push_back(new DrawableObject(spSun, planet, tgBack, starsTex));
 }
 
 void Scene::whacAMole() {
@@ -453,7 +462,7 @@ void Scene::whacAMole() {
 	sp->setUniform("useTexture", 1);
 	//------------------GROUND------------------------------------------
 	this->camera->registerObserver(sp);
-	Model* ground = ModelManger::getModel("teren.obj"); Texture* grassText = TextureManager::getTexture("grass.png");
+	Model* ground = ModelManger::getModel("teren.obj"); Texture* grassText = TextureManager::getTexture("negy.jpg");
 	TransformationComposite* tgGround = new TransformationComposite();
 	tgGround->add(new Scale(glm::vec3(0.08f)));
 	this->addObject(new DrawableObject(sp, ground, tgGround, grassText));
@@ -495,6 +504,11 @@ void Scene::whacAMole() {
 		tgTitle->add(new RandMovement(1.0f, glm::vec3(minX, 0.1f, minZ), glm::vec3(maxX, 1.5f, maxZ)));
 		this->addObject(new DrawableObject(sp, title, tgTitle, titleTex));
 	}
+
+	Model* login = ModelManger::getModel("login new.obj");
+	Texture* ggg = TextureManager::getTexture("wooden_fence.png");
+	TransformationComposite* jjj = new TransformationComposite();
+	this->addObject(new DrawableObject(sp, login, jjj, ggg));
 }
 
 void Scene::addObject(DrawableObject* drawObj) {
@@ -577,7 +591,7 @@ void Scene::setInactiveDrawObj(int id) {
 
 void Scene::growNewTree(glm::vec3 position) {
 	TransformationComposite* tg = new TransformationComposite();
-	tg->add(new Scale(glm::vec3(0.1f)));
+	tg->add(new Scale(glm::vec3(0.2f)));
 	tg->add(new Translation(position));
 
 	DrawableObject* newTree = new DrawableObject(this->growableTreeModel->shaderProgram, this->growableTreeModel->model, tg);
@@ -586,8 +600,11 @@ void Scene::growNewTree(glm::vec3 position) {
 }
 
 void Scene::spawnNewMole(int type) {
-	ShaderProgram* sp = ShaderProgManager::getShaderProgram(VERTEX_SHADER, TEXTURE_FRAGMENT_SHADER);
-	ShaderProgManager::registerAllObservers(sp, this->camera, this->flashlight);
+	//ShaderProgram* sp = ShaderProgManager::getShaderProgram(VERTEX_SHADER, MULTI_FRAGMENT_SHADER);
+	//ShaderProgManager::registerAllObservers(sp, this->camera, this->flashlight);
+	//this->lights.at(2)->registerObserver(sp);//2
+
+	//sp->setUniform("useTexture", 1);
 
 	float maxX = 2.5f; float minX = -3.5f;
 	float maxZ = 3.5f; float minZ = -3.0f;
@@ -623,5 +640,37 @@ void Scene::spawnNewMole(int type) {
 			tg->add(new RandMovement(1.0f, glm::vec3(minX, 0.0f, minZ), glm::vec3(maxX, 0.0f, maxZ)));
 			break;
 	}
-	this->addObject(new DrawableObject(sp, m, tg, t));
+	this->addObject(new DrawableObject(this->spNewMoles, m, tg, t));
 }
+
+void Scene::printAllBezierPoints() {
+	printf("POINTS FOR BEZIER: \n");
+	for (int i = 0; i < this->bezierPoints.size(); i++) {
+		glm::vec3 point = this->bezierPoints.at(i);
+		printf("%d \t\t[%.2f\t%.2f\t%.2f]\n", i, point.x, point.y, point.z);
+	}
+}
+
+void Scene::cropBezierPoints() {
+	int n = this->bezierPoints.size();
+	int remainder = n % 4;
+
+	if (remainder != 0) { //if input 6 poits throw 2 away...always 4 points...4,8,etc
+		this->bezierPoints.resize(n - remainder);
+	}
+}
+
+/*void Scene::printAllFilteredBezierPoints() {
+	printf("CROPED POINTS FOR BEZIER: \n");
+	int n = this->bezierPoints.size();
+	int remainder = n % 4;
+
+	if (remainder != 0) { //if input 6 poits throw 2 away...always 4 points...4,8,etc
+		this->bezierPoints.resize(n - remainder);
+	}
+
+	for (int i = 0; i < this->bezierPoints.size(); i++) {
+		glm::vec3 point = this->bezierPoints.at(i);
+		printf("%d \t\t[%.2f\t%.2f\t%.2f]\n", i, point.x, point.y, point.z);
+	}
+}*/

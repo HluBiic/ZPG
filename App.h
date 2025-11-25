@@ -33,10 +33,14 @@ class App {
 
 		static App* appInstance;
 
+		
+
 	public:
 		static App* getInstance();
 
 		bool rightMousePressed = false;
+		bool deleteToggled = false;
+		bool pathingToggled = false;
 
 		/**
 		* @brief OpenGL initialiyation and prints its info + callbacks.

@@ -27,6 +27,9 @@ public:
 	vector<DrawableObject*> objects;
 
 	DrawableObject* growableTreeModel;
+	ShaderProgram* spNewMoles;
+
+	vector<glm::vec3> bezierPoints;
 
 	int score = 0;
 	string sceneType;
@@ -48,4 +51,8 @@ public:
 	void setInactiveDrawObj(int id);
 	void growNewTree(glm::vec3 position);
 	void spawnNewMole(int type);
+
+	void printAllBezierPoints();
+	void cropBezierPoints();
+	//void printAllFilteredBezierPoints();
 };
