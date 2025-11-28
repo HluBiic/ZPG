@@ -64,7 +64,7 @@ Scene::Scene() {
 
 	this->growableTreeModel = new DrawableObject(
 		spGrow,
-		new Model(tree, size(tree), 6),
+		new Model(tree, size(tree), 6, "tree"),
 		new TransformationComposite()
 	);
 	srand(time(0));
@@ -85,6 +85,13 @@ Scene::Scene() {
 		new TransformationComposite(),
 		new Texture()
 	));
+
+	this->bezierFollowerObject = new DrawableObject(
+		this->spNewMoles,
+		ModelManger::getModel("fiona.obj"),
+		nullptr,
+		TextureManager::getTexture("fiona.png")
+	);
 }
 
 void Scene::tryoutScene() {
@@ -150,7 +157,7 @@ void Scene::testScene() {
 	this->lights.at(1)->registerObserver(spTexture);
 
 
-	Model* m = new Model(sphere, size(sphere), 6);
+	Model* m = new Model(sphere, size(sphere), 6, "sphere");
 	Model* m2 = ModelManger::getModel("new_sphere.obj"); Texture* t = TextureManager::getTexture("wooden_fence.png");
 
 	TransformationComposite* tg1 = new TransformationComposite();
@@ -228,7 +235,7 @@ void Scene::symetricalSpheresScene() {
 		l->registerObserver(sp);
 	}
 
-	Model* m = new Model(sphere, size(sphere), 6);
+	Model* m = new Model(sphere, size(sphere), 6, "sphere");
 
 	TransformationComposite* tg1 = new TransformationComposite();
 	tg1->add(new Translation(glm::vec3(0.0f, -2.0f, 0.0f)));
@@ -272,9 +279,9 @@ void Scene::forestScene() {
 	this->flashlight->registerObserver(sp);
 
 
-	Model* treeModel = new Model(tree, size(tree), 6);
-	Model* bushModel = new Model(bushes, size(bushes), 6);
-	Model* firefly = new Model(sphere, size(sphere), 6);
+	Model* treeModel = new Model(tree, size(tree), 6, "tree");
+	Model* bushModel = new Model(bushes, size(bushes), 6, "bush");
+	Model* firefly = new Model(sphere, size(sphere), 6, "sphere");
 
 	float xTreeOffset = 0.0f;
 	float yTreeBushOffset = 0.0f;//same for all trees + bushes
@@ -515,17 +522,40 @@ void Scene::whacAMole() {
 		tgTitle->add(new RandMovement(1.0f, glm::vec3(minX, 0.1f, minZ), glm::vec3(maxX, 1.5f, maxZ)));
 		this->addObject(new DrawableObject(sp, title, tgTitle, titleTex));
 	}
+	//------------------SMALL RAND FOREST------------------------------------------
+	Model* tree = ModelManger::getModel("tree.obj");
+	Texture* treeTex = TextureManager::getTexture("baked_tree.png");
 
-	Model* login = ModelManger::getModel("login new.obj");
-	Texture* ggg = TextureManager::getTexture("wooden_fence.png");
+	float xTreeOffset = 0.0f;
+	float zTreeOffset = 0.0f;
+
+	for (int i = 0; i < 7; i++) {
+		TransformationComposite* jjj = new TransformationComposite();
+		xTreeOffset = -4.0 + (float)(rand()) / RAND_MAX * (4.0 - (-4.0));
+		zTreeOffset = -4.0 + (float)(rand()) / RAND_MAX * (4.0 - (-4.0));
+		jjj->add(new Scale(glm::vec3(1.5f)));
+		jjj->add(new Translation(glm::vec3(xTreeOffset, 0.0, zTreeOffset)));
+		this->addObject(new DrawableObject(sp, tree, jjj, treeTex));
+	}
+
+	/*Model* fiona = ModelManger::getModel("fiona.obj");
+	Texture* ggg = TextureManager::getTexture("fiona.png");
 	TransformationComposite* jjj = new TransformationComposite();
-	jjj->add(new BezierSimple(
-		/*this->bezierPoints.at(0), */ glm::vec3(-3.35, 0.00, -1.19),
-		/*this->bezierPoints.at(1), */ glm::vec3(-2.50, 0.14, -3.27),
-		/*this->bezierPoints.at(2), */ glm::vec3(-0.37, 0.17, -4.19),
-		/*this->bezierPoints.at(3), */ glm::vec3(0.72, -0.00, -2.10),
-		0.1f));
-	this->addObject(new DrawableObject(sp, login, jjj, ggg));
+	//jjj->add(new BezierSimple(
+	//	glm::vec3(-3.35, 0.00, -1.19),
+	//	glm::vec3(-2.50, 0.14, -3.27),
+	//	glm::vec3(-0.37, 0.17, -4.19),
+	//	glm::vec3(0.72, -0.00, -2.10),
+	//	0.1f));
+
+	vector<glm::vec3> points = {
+		glm::vec3(-4.37, 0.11, 0.45), glm::vec3(-3.92,  0.06, -1.40), glm::vec3(-1.65, -0.00, -1.64), glm::vec3(-0.97, -0.00, 0.34), //S1
+		glm::vec3(0.68, -0.00, 2.93), glm::vec3(2.11, -0.00, 3.07), glm::vec3(2.81, 0.04, 1.02) //S2
+	};*/
+
+
+	//jjj->add(new BezierSpline(points, 0.5f));
+	//this->objects.push_back(new DrawableObject(sp, fiona, jjj, ggg));
 }
 
 void Scene::addObject(DrawableObject* drawObj) {
@@ -564,6 +594,14 @@ void Scene::draw() {
 		}
 	}
 
+	if (this->bezierPointsComplete) { //all bezier points were selected
+		this->bezierFollowerObject->transformation = new TransformationComposite();
+		this->bezierFollowerObject->transformation->add(new BezierSpline(this->bezierPoints, 0.5f));
+		this->objects.push_back(this->bezierFollowerObject);
+		this->bezierPoints.clear();
+		this->bezierPointsComplete = false;
+	}
+
 	// draw objects
 	for (auto o : this->objects) {
 		if (o->visible) {
@@ -588,19 +626,22 @@ void Scene::setInactiveDrawObj(int id) {
 				this->objects.erase(remove(this->objects.begin(), this->objects.end(), o), this->objects.end());// removing by the object
 				//printf("removing object: %s\n", o->model->modelName.c_str());
 
-				//get points in the whacamole for clicking on freddy
-				if (o->model->modelName == "meme_glamrock_freddy.obj") {
-					this->score++;
-					printf("\t\t\t\t\t\tYOU WHACKED freddy \t [Common] +1 point \tScore: %d\n", this->score);
-				} else if (o->model->modelName == "shrek.obj") {
-					this->score += 5;
-					printf("\t\t\t\t\t\tYOU WHACKED shrek \t [Rare] +5 points \tScore: %d\n", this->score);
-				} else if (o->model->modelName == "ZPG Title.obj") {
-					this->score += 99;
-					printf("\t\t\t\t\t\tYOU WHACKED zpg title \t [Mythic] +99 points \tScore: %d\n", this->score);
+				if (this->sceneType == "whacamole") {
+					if (o->model->modelName == "meme_glamrock_freddy.obj") {
+						this->score++;
+						printf("\t\t\t\t\t\tYOU WHACKED freddy \t [Common] +1 point \tScore: %d\n", this->score);
+					}
+					else if (o->model->modelName == "shrek.obj") {
+						this->score += 5;
+						printf("\t\t\t\t\t\tYOU WHACKED shrek \t [Rare] +5 points \tScore: %d\n", this->score);
+					}
+					else if (o->model->modelName == "ZPG Title.obj") {
+						this->score += 99;
+						printf("\t\t\t\t\t\tYOU WHACKED zpg title \t [Mythic] +99 points \tScore: %d\n", this->score);
+					}
 				}
 			} else {
-				//printf("cannot remove object: %s\n", o->model->modelName.c_str());
+				printf("cannot remove object: %s\n", o->model->modelName.c_str());
 			}
 		}
 	}
@@ -613,7 +654,7 @@ void Scene::growNewTree(glm::vec3 position) {
 
 	DrawableObject* newTree = new DrawableObject(this->growableTreeModel->shaderProgram, this->growableTreeModel->model, tg);
 	this->addObject(newTree);
-	printf("planting tree at: %f,%f,%f\n", position.x, position.y, position.z);
+	//printf("planting tree at: %f,%f,%f\n", position.x, position.y, position.z);
 }
 
 void Scene::spawnNewMole(int type) {
@@ -669,12 +710,19 @@ void Scene::printAllBezierPoints() {
 }
 
 void Scene::cropBezierPoints() {
-	int n = this->bezierPoints.size();
-	int remainder = n % 4;
-
-	if (remainder != 0) { //if input 6 poits throw 2 away...always 4 points...4,8,etc
-		this->bezierPoints.resize(n - remainder);
+	if (bezierPoints.size() < 4) {
+		bezierPoints.clear();
+		return;
 	}
+
+
+	int n = this->bezierPoints.size();
+	int toRemove = (n - 1) % 3; //points as 4,3,3,3 etc
+
+	if (toRemove != 0) { //throw away unnecesary
+		this->bezierPoints.resize(n - toRemove);
+	}
+	this->bezierPointsComplete = true;
 }
 
 void Scene::drawSkybox() {
@@ -684,18 +732,3 @@ void Scene::drawSkybox() {
 
 	glDepthFunc(GL_LESS);
 }
-
-/*void Scene::printAllFilteredBezierPoints() {
-	printf("CROPED POINTS FOR BEZIER: \n");
-	int n = this->bezierPoints.size();
-	int remainder = n % 4;
-
-	if (remainder != 0) { //if input 6 poits throw 2 away...always 4 points...4,8,etc
-		this->bezierPoints.resize(n - remainder);
-	}
-
-	for (int i = 0; i < this->bezierPoints.size(); i++) {
-		glm::vec3 point = this->bezierPoints.at(i);
-		printf("%d \t\t[%.2f\t%.2f\t%.2f]\n", i, point.x, point.y, point.z);
-	}
-}*/

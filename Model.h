@@ -32,7 +32,7 @@ class Model {
 		string modelName;
 
 		//for simple modelst from .h files like sphere,plain,tree,bushes,suzi etc.
-		Model(const float* data, int vertCount, int floatPerVert);
+		Model(const float* data, int vertCount, int floatPerVert, const char* modelName);
 
 		//for models saved as .obj loaded with tinyobj
 		Model(const char* name);

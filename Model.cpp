@@ -1,7 +1,7 @@
 #include "Model.h"
 
 // length represents total number of entries in the model (each single float value)
-Model::Model(const float* data, int length, int floatsPerVert) {
+Model::Model(const float* data, int length, int floatsPerVert, const char* modelName) {
     this->floatsPerVert = floatsPerVert;
     vector<float> temp(data, data + length);
     this->rawData = temp;
@@ -30,7 +30,7 @@ Model::Model(const float* data, int length, int floatsPerVert) {
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, this->floatsPerVert * sizeof(float), (GLvoid*)(6 * sizeof(float)));
         glEnableVertexAttribArray(2);
     }
-    this->modelName = "NULL";
+    this->modelName = modelName;
 }
 
 //code from LMS + little corrections

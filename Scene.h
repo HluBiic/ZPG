@@ -32,8 +32,10 @@ public:
 	ShaderProgram* spNewMoles;
 
 	DrawableObject* skybox;
+	DrawableObject* bezierFollowerObject;
 
 	vector<glm::vec3> bezierPoints;
+	bool bezierPointsComplete = false; //only after all points are in vector then draw follower obj
 
 	int score = 0;
 	string sceneType;

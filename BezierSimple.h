@@ -26,7 +26,7 @@ private:
 public:
 	BezierSimple(glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3, float speed);
 	glm::mat4 apply() override;
-	//ONLY FOR DEBUGING ... delete before final submition of the project!!!
+	//ONLY FOR DEBUGING
 	void testPrint();
 };
 
