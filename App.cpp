@@ -46,10 +46,10 @@ void App::initialization() {
 	printf("Using GLFW %i.%i.%i\n", major, minor, revision);
 
 	// Initial setup of size, buffer size, viewport
-	int width, height;
-	glfwGetFramebufferSize(this->window, &width, &height);
-	float ratio = width / (float)height;
-	glViewport(0, 0, width, height);
+	//int width, height;
+	glfwGetFramebufferSize(this->window, &this->currentWidth, &this->currentHeight);
+	float ratio = this->currentWidth / (float)this->currentHeight;
+	glViewport(0, 0, this->currentWidth, this->currentHeight);
 
 	// Registers all the callbacks
 	glfwSetErrorCallback(this->error_callback);
@@ -94,6 +94,7 @@ void App::run() {
 
 		// draw the currently chosen scene
 		if (this->currentScene < this->scenes.size()) {
+			this->scenes.at(this->currentScene).drawSkybox();
 			this->scenes.at(this->currentScene).draw();
 		}
 
@@ -128,6 +129,8 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
 	//scene switchinch via 1-3 numerical keys + cam moving with wasd
 
 	App* app = (App*)glfwGetWindowUserPointer(window); // retrieve the app instance to access the scene index 
+	glfwGetFramebufferSize(window, &app->currentWidth, &app->currentHeight); //so that size is current not only after resize but also between scene switching
+	app->scenes.at(app->currentScene).camera->setViewportSize(app->currentWidth, app->currentHeight);
 
 	if (action == GLFW_PRESS || action == GLFW_REPEAT) { //GLFW_REPEAT - for button holding down
 		int newIndex = -1;
@@ -167,10 +170,10 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
 				if (app->pathingToggled) {
 					app->pathingToggled = false;
 					printf("BEZIER POINTS MODE OFF\n");
-					app->scenes.at(app->currentScene).printAllBezierPoints();
+					//app->scenes.at(app->currentScene).printAllBezierPoints();
 					app->scenes.at(app->currentScene).cropBezierPoints();
 					app->scenes.at(app->currentScene).printAllBezierPoints();
-					app->scenes.at(app->currentScene).bezierPoints.clear();
+					//app->scenes.at(app->currentScene).bezierPoints.clear();
 				} else {
 					app->pathingToggled = true;
 					printf("BEZIER POINTS MODE ON\n");
@@ -199,9 +202,11 @@ void App::window_iconify_callback(GLFWwindow* window, int iconified) {
 
 void App::window_size_callback(GLFWwindow* window, int width, int height) {
 	printf("resize %d, %d \n", width, height);
-	glViewport(0, 0, width, height);
+	glViewport(0, 0, width, height);	
 
 	App* app = (App*)glfwGetWindowUserPointer(window); // retrieve the app instance to access the scene index 
+	app->currentHeight = height;
+	app->currentWidth = width;
 	app->scenes.at(app->currentScene).camera->setViewportSize(width, height);//cam will notify all shader programs about resizing
 }
 

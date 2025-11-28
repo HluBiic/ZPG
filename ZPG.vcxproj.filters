@@ -87,6 +87,12 @@
     <ClCompile Include="ParametricLine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BezierSimple.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BezierSpline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShaderProgram.h">
@@ -188,6 +194,12 @@
     <ClInclude Include="ParametricLine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BezierSimple.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BezierSpline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="phong_incorrect_fragment_shader.glsl">
@@ -212,6 +224,12 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="multi_fragment_shader.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="skybox_fragment_shader.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="skybox_vertex_shader.glsl">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

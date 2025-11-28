@@ -131,6 +131,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="BezierSimple.cpp" />
+    <ClCompile Include="BezierSpline.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DrawableObject.cpp" />
     <ClCompile Include="Light.cpp" />
@@ -157,6 +159,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
+    <ClInclude Include="BezierSimple.h" />
+    <ClInclude Include="BezierSpline.h" />
     <ClInclude Include="bushes.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="DrawableObject.h" />
@@ -197,6 +201,8 @@
     <None Include="multi_fragment_shader.glsl" />
     <None Include="phong_correct_fragment_shader.glsl" />
     <None Include="phong_incorrect_fragment_shader.glsl" />
+    <None Include="skybox_fragment_shader.glsl" />
+    <None Include="skybox_vertex_shader.glsl" />
     <None Include="texture_fragment_shader.glsl" />
     <None Include="vertex_shader.glsl" />
   </ItemGroup>

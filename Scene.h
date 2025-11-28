@@ -16,6 +16,8 @@ constexpr const char* PHONG_INCORRECT_FRAGMENT_SHADER = "phong_incorrect_fragmen
 constexpr const char* BLINN_FRAGMENT_SHADER = "blinn_fragment_shader.glsl";
 constexpr const char* TEXTURE_FRAGMENT_SHADER = "texture_fragment_shader.glsl";
 constexpr const char* MULTI_FRAGMENT_SHADER = "multi_fragment_shader.glsl";
+constexpr const char* SKYBOX_FRAGMENT_SHADER = "skybox_fragment_shader.glsl";
+constexpr const char* SKYBOX_VERTEX_SHADER = "skybox_vertex_shader.glsl";
 
 class Scene {
 private:
@@ -28,6 +30,8 @@ public:
 
 	DrawableObject* growableTreeModel;
 	ShaderProgram* spNewMoles;
+
+	DrawableObject* skybox;
 
 	vector<glm::vec3> bezierPoints;
 
@@ -54,5 +58,7 @@ public:
 
 	void printAllBezierPoints();
 	void cropBezierPoints();
+
+	void drawSkybox();
 	//void printAllFilteredBezierPoints();
 };

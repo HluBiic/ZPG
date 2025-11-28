@@ -8,6 +8,8 @@
 #include "RandMovement.h"
 #include "Translation.h"
 #include "WCustomTransform.h"
+#include "BezierSimple.h"
+#include "BezierSpline.h"
 #include "TransformationComposite.h"
 #include "Spin.h"
 #include "Texture.h"

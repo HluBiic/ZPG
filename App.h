@@ -38,6 +38,9 @@ class App {
 	public:
 		static App* getInstance();
 
+		int currentWidth = -1;
+		int currentHeight = -1;
+
 		bool rightMousePressed = false;
 		bool deleteToggled = false;
 		bool pathingToggled = false;

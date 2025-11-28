@@ -74,6 +74,17 @@ Scene::Scene() {
 	ShaderProgManager::registerAllObservers(this->spNewMoles, this->camera, this->flashlight);
 	this->lights.at(2)->registerObserver(this->spNewMoles);
 	this->spNewMoles->setUniform("useTexture", 1);
+
+
+	ShaderProgram* spSkybox = ShaderProgManager::getShaderProgram(SKYBOX_VERTEX_SHADER, SKYBOX_FRAGMENT_SHADER);
+	this->camera->registerObserver(spSkybox);
+
+	this->skybox = (new DrawableObject(
+		spSkybox,
+		ModelManger::getModel("cube.obj"),
+		new TransformationComposite(),
+		new Texture()
+	));
 }
 
 void Scene::tryoutScene() {
@@ -116,12 +127,14 @@ void Scene::tryoutScene() {
 	tg5->add(new WCustomTransform(20.0f));
 	tg5->add(new Translation(glm::vec3(-2.0f, 0.0f, 0.0f)));
 
-	this->addObject(new DrawableObject(sp, m4, tg4));
+
+	//this->addObject(new DrawableObject(sp, m4, tg4));
 	this->addObject(new DrawableObject(sp2, m4, tg5, t4));
+	this->addObject(new DrawableObject(sp2, m4, tg4));
 }
 
 void Scene::testScene() {
-	this->sceneType = "symetricalSpheres";
+	this->sceneType = "testScene";
 	ShaderProgram* sp = ShaderProgManager::getShaderProgram(VERTEX_SHADER, MULTI_FRAGMENT_SHADER);
 	sp->setUniform("objectColor", glm::vec4(0.385, 0.647, 0.812, 1.0));
 	//sp->setUniform("objectColor", glm::vec4(1.0, 0.0, 0.0, 1.0));
@@ -163,8 +176,6 @@ void Scene::testScene() {
 	
 	spTexture->setUniform("useTexture", 1);
 	this->objects.push_back(new DrawableObject(spTexture, m2, tg4, t)); //textured one
-
-	
 }
 
 //LAB 05 - TASK 3a - simple static triangle
@@ -462,7 +473,7 @@ void Scene::whacAMole() {
 	sp->setUniform("useTexture", 1);
 	//------------------GROUND------------------------------------------
 	this->camera->registerObserver(sp);
-	Model* ground = ModelManger::getModel("teren.obj"); Texture* grassText = TextureManager::getTexture("negy.jpg");
+	Model* ground = ModelManger::getModel("teren.obj"); Texture* grassText = TextureManager::getTexture("grass.png");
 	TransformationComposite* tgGround = new TransformationComposite();
 	tgGround->add(new Scale(glm::vec3(0.08f)));
 	this->addObject(new DrawableObject(sp, ground, tgGround, grassText));
@@ -508,6 +519,12 @@ void Scene::whacAMole() {
 	Model* login = ModelManger::getModel("login new.obj");
 	Texture* ggg = TextureManager::getTexture("wooden_fence.png");
 	TransformationComposite* jjj = new TransformationComposite();
+	jjj->add(new BezierSimple(
+		/*this->bezierPoints.at(0), */ glm::vec3(-3.35, 0.00, -1.19),
+		/*this->bezierPoints.at(1), */ glm::vec3(-2.50, 0.14, -3.27),
+		/*this->bezierPoints.at(2), */ glm::vec3(-0.37, 0.17, -4.19),
+		/*this->bezierPoints.at(3), */ glm::vec3(0.72, -0.00, -2.10),
+		0.1f));
 	this->addObject(new DrawableObject(sp, login, jjj, ggg));
 }
 
@@ -658,6 +675,14 @@ void Scene::cropBezierPoints() {
 	if (remainder != 0) { //if input 6 poits throw 2 away...always 4 points...4,8,etc
 		this->bezierPoints.resize(n - remainder);
 	}
+}
+
+void Scene::drawSkybox() {
+	glDepthFunc(GL_LEQUAL);
+
+	this->skybox->draw();
+
+	glDepthFunc(GL_LESS);
 }
 
 /*void Scene::printAllFilteredBezierPoints() {
