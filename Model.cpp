@@ -96,6 +96,24 @@ Model::Model(const char* name) {
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(2); //enable vertex attributes...uv for textures
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+
+
+    if (!materials.empty()) {
+        tinyobj::material_t& mat = materials[0]; //loading only 1 mnat.
+
+        glm::vec3 Ka(mat.ambient[0], mat.ambient[1], mat.ambient[2]);
+        glm::vec3 Kd(mat.diffuse[0], mat.diffuse[1], mat.diffuse[2]);
+        glm::vec3 Ks(mat.specular[0], mat.specular[1], mat.specular[2]);
+        float Ns = mat.shininess;
+
+        this->material = new Material(Ka, Kd, Ks, Ns);
+
+        if (!mat.diffuse_texname.empty()) {
+            std::string texPath = "assets/" + mat.diffuse_texname;
+            this->texture = new Texture(texPath.c_str());
+            std::cout << "Loaded texture: " << texPath << std::endl;
+        }
+    }
 }
 
 void Model::draw() {

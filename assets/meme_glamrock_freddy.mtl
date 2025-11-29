@@ -9,7 +9,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 3
-map_Kd C:/TEX_GlamRockFreddy_EyeMat_BaseColor.png
+map_Kd textures/TEX_GlamRockFreddy_EyeMat_BaseColor.png
 
 newmtl MAT_GlamFreddy
 Ns 405.610870
@@ -19,5 +19,5 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd C:/TEX_GlamRockFreddy_BaseColor.png
-map_Bump -bm 1.000000 C:/TEX_Glamrock_Freddy_Body_Hour1_Normal.png
+map_Kd textures/TEX_GlamRockFreddy_BaseColor.png
+map_Bump -bm 1.000000 textures/TEX_Glamrock_Freddy_Body_Hour1_Normal.png

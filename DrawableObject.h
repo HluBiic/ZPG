@@ -13,6 +13,7 @@
 #include "TransformationComposite.h"
 #include "Spin.h"
 #include "Texture.h"
+#include "Material.h"
 #include <string>
 
 constexpr const char* VERTEX_SHADER = "vertex_shader.glsl";
@@ -28,12 +29,14 @@ public:
 	Model* model;
 	TransformationComposite* transformation;
 	Texture* texture;
+	Material* material;
 
 	bool visible = false;
 
-	DrawableObject();
+	//DrawableObject();
 	DrawableObject(ShaderProgram* sp, Model* m, TransformationComposite* t);
 	DrawableObject(ShaderProgram* sp, Model* m, TransformationComposite* t, Texture* tx);
+	DrawableObject(ShaderProgram* sp, Model* m, TransformationComposite* t, Texture* tx, Material* mat);
 
 	void setShader();
 	void unsetShader();

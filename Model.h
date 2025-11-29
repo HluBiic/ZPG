@@ -15,6 +15,7 @@
 #include "tree.h"
 #include "plain.h"
 #include "Texture.h"
+#include "Material.h"
 
 #include "tiny_obj_loader.h"
 
@@ -30,6 +31,8 @@ class Model {
 		GLuint VBO = 0; // bertex buffer object
 	public:
 		string modelName;
+		Material* material;
+		Texture* texture;
 
 		//for simple modelst from .h files like sphere,plain,tree,bushes,suzi etc.
 		Model(const float* data, int vertCount, int floatPerVert, const char* modelName);

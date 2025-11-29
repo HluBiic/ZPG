@@ -7,7 +7,7 @@ Material::Material() {
 	this->shininess = 32.0f;
 }
 
-Material::Material(glm::vec3& ambient, glm::vec3& diffuse, glm::vec3& specular, float shininess) {
+Material::Material(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, float shininess) {
 	this->ambient = ambient;
 	this->diffuse = diffuse;
 	this->specular = specular;
@@ -23,5 +23,5 @@ void Material::setUniforms(ShaderProgram* sp, const char* name) {
 	sp->setUniform(ambient.c_str(), this->ambient);
 	sp->setUniform(diffuse.c_str(), this->diffuse);
 	sp->setUniform(specular.c_str(), this->specular);
-	sp->setUniform(specular.c_str(), this->specular);
+	sp->setUniform(shininess.c_str(), this->shininess);
 }

@@ -18,8 +18,8 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 3
-map_Kd C:/Users/nem03/Documents/GitHub/zpg2025/ZPG/Assets/formula 1/C:/Users/Dil Afroze/Desktop/formula 1/Substance SpecGloss/Right ones/formula1_DefaultMaterial_Diffuse.png
-map_Ks C:/Users/nem03/Documents/GitHub/zpg2025/ZPG/Assets/formula 1/C:/Users/Dil Afroze/Desktop/formula 1/Substance SpecGloss/Right ones/formula1_DefaultMaterial_Specular.png
+map_Kd textures/fiona.png
+map_Ks textures/fiona.png
 
 newmtl Mirrors
 Ns 100.000015

@@ -121,10 +121,10 @@ void Scene::tryoutScene() {
 	Texture* t2 = TextureManager::getTexture("wooden_fence.png");
 	Texture* t4 = TextureManager::getTexture("sun.png");
 
-
 	ShaderProgram* sp2 = ShaderProgManager::getShaderProgram(VERTEX_SHADER, MULTI_FRAGMENT_SHADER);
 	sp2->setUniform("useTexture", 1);
 	ShaderProgManager::registerAllObservers(sp2, this->camera, this->lights.at(1));
+	this->flashlight->registerObserver(sp2);
 	//this->camera->registerObserver(sp2);
 	//this->lights.at(0)->registerObserver(sp2);
 
@@ -136,8 +136,40 @@ void Scene::tryoutScene() {
 
 
 	//this->addObject(new DrawableObject(sp, m4, tg4));
-	this->addObject(new DrawableObject(sp2, m4, tg5, t4));
-	this->addObject(new DrawableObject(sp2, m4, tg4));
+	//this->addObject(new DrawableObject(sp2, m4, tg5, t4));
+	//this->addObject(new DrawableObject(sp2, m4, tg4));
+
+	Model* formula = ModelManger::getModel("formula1.obj");
+	TransformationComposite* tgFormula1 = new TransformationComposite();
+	tgFormula1->add(new Rotation(90.0, glm::vec3(0.0, 1.0, 0.0)));
+	tgFormula1->add(new Scale(glm::vec3(0.05)));
+	tgFormula1->add(new Translation(glm::vec3(-1.0, 0.0, -3.0)));
+	TransformationComposite* tgFormula2 = new TransformationComposite();
+	tgFormula2->add(new Rotation(90.0, glm::vec3(0.0, 1.0, 0.0)));
+	tgFormula2->add(new Scale(glm::vec3(0.05)));
+	tgFormula2->add(new Translation(glm::vec3(1.0, 0.0, -3.0)));
+	TransformationComposite* tgFormula3 = new TransformationComposite();
+	tgFormula3->add(new Rotation(90.0, glm::vec3(0.0, 1.0, 0.0)));
+	tgFormula3->add(new Scale(glm::vec3(0.05)));
+	tgFormula3->add(new Translation(glm::vec3(0.0, 0.0, -3.0)));
+
+	Material* mat = new Material(
+		glm::vec3(0.15f, 0.10f, 0.10f),
+		glm::vec3(0.75f, 0.35f, 0.25f),
+		glm::vec3(0.5f, 0.5f, 0.5f),
+		218.0f
+	);
+
+	Material* mat2 = new Material(
+		glm::vec3(0.10f, 0.10f, 0.20f),
+		glm::vec3(0.25f, 0.35f, 0.75f),
+		glm::vec3(0.6f, 0.6f, 0.8f),
+		800.0f
+	);
+
+	this->addObject(new DrawableObject(sp2, formula, tgFormula1, t2));
+	this->addObject(new DrawableObject(sp2, formula, tgFormula2, t2, mat2));
+	this->addObject(new DrawableObject(sp2, formula, tgFormula3, t2, mat));
 }
 
 void Scene::testScene() {
@@ -731,7 +763,7 @@ void Scene::cropBezierPoints() {
 void Scene::drawSkybox() {
 	glDepthFunc(GL_LEQUAL);
 
-	this->skybox->draw();
+	//this->skybox->draw();
 
 	glDepthFunc(GL_LESS);
 }

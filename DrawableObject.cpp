@@ -21,6 +21,17 @@ DrawableObject::DrawableObject(ShaderProgram* sp, Model* m, TransformationCompos
 	this->visible = true;
 }
 
+DrawableObject::DrawableObject(ShaderProgram* sp, Model* m, TransformationComposite* t, Texture* tx, Material* mat) {
+	this->shaderProgram = sp;
+	this->model = m;
+	this->transformation = t;
+	this->texture = tx;
+	this->material = mat;
+	DrawableObject::IDCounter++;
+	this->objectId = DrawableObject::IDCounter;
+	this->visible = true;
+}
+
 void DrawableObject::setShader() {
 	this->shaderProgram->useShaderProgram();
 }
@@ -42,9 +53,19 @@ void DrawableObject::draw() {
 	this->setShader();
 	this->setTransformation();
 
+	if (this->material) {
+		this->shaderProgram->setUniform("useMaterial", 1);
+		this->material->setUniforms(this->shaderProgram, "material");
+	} else {
+		this->shaderProgram->setUniform("useMaterial", 0);
+	}
+
 	if (this->texture) {
+		this->shaderProgram->setUniform("useTexture", 1);
 		this->texture->bind(0);
 		this->shaderProgram->setUniform("textureUnitID", 0);
+	} else {
+		this->shaderProgram->setUniform("useTexture", 0);
 	}
 
 	this->setModel();

@@ -36,6 +36,7 @@ uniform Material material;
 
 uniform sampler2D textureUnitID;
 uniform int useTexture; //1 yes..0no
+uniform int useMaterial;
 
 // light attenuation calc
 float attenuation(float d, float c, float l, float q) {
@@ -45,7 +46,7 @@ float attenuation(float d, float c, float l, float q) {
 
 vec4 calculateAmbient(vec4 lightAmbientCol) {
 	vec4 ambient = vec4(0.1, 0.1, 0.1, 1.0);
-	if (material.ambient != vec3(0.0)) { //with material
+	if (useMaterial == 1) { //with material
 		ambient += lightAmbientCol * vec4(material.ambient, 1.0);
 	} else { //without material
 		ambient += lightAmbientCol;
@@ -59,7 +60,7 @@ vec4 calculateDiffuse(vec4 lightDiffCol, vec3 vectorL, vec3 vectorN) {
 	cosVal = max(dot(vectorL, vectorN), 0.0);
 
 	if ( cosVal > 0.0 ) { //show only if the cos is NOT negative...the "holo" effect
-		if (material.diffuse!= vec3(0.0)) { //with material
+		if (useMaterial == 1) { //with material
 			return lightDiffCol * vec4(material.diffuse, 1.0) * cosVal;
 		}
 		return lightDiffCol * cosVal;
@@ -76,7 +77,7 @@ vec4 calculateSpecular(vec3 camPos, vec4 worldPos, vec3 vectorL, vec3 vectorN, f
 	float cosVal = 0.0;
 	cosVal = max(dot(vectorL, vectorN), 0.0);
 	if (cosVal > 0.0) { //the "holo" effect
-		if (material.specular != vec3(0.0)) { //wih material
+		if (useMaterial == 1) { //wih material
 			return lightSpecCol * vec4(material.specular, 1.0) * spec;
 		}
 		return lightSpecCol * spec;
@@ -161,7 +162,13 @@ void main () {
 
 		//vec4 diffuse = calculateDiffuse(lights[index].diffuseColor, lightDir, norm) * objectColor;
 		vec4 diffuse = calculateDiffuse(lights[index].diffuseColor, lightDir, norm) * baseColor;
-		vec4 specular = calculateSpecular(camPosition, worldPosition, lightDir, norm, shinines, lights[index].specularColor);
+		vec4 specular;
+		if (useMaterial == 1) {
+			specular = calculateSpecular(camPosition, worldPosition, lightDir, norm, material.shininess, lights[index].specularColor);
+		} else {
+			specular = calculateSpecular(camPosition, worldPosition, lightDir, norm, shinines, lights[index].specularColor);
+		}
+		
 			
 		//suming up all lights + apply the attenuation
 		sumDiffuse += diffuse * att;
