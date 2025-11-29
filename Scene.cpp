@@ -88,7 +88,7 @@ Scene::Scene() {
 
 	this->bezierFollowerObject = new DrawableObject(
 		this->spNewMoles,
-		ModelManger::getModel("fiona.obj"),
+		ModelManger::getModel("formula1.obj"),
 		nullptr,
 		TextureManager::getTexture("fiona.png")
 	);
@@ -524,37 +524,38 @@ void Scene::whacAMole() {
 	}
 	//------------------SMALL RAND FOREST------------------------------------------
 	Model* tree = ModelManger::getModel("tree.obj");
-	Texture* treeTex = TextureManager::getTexture("baked_tree.png");
+	Texture* treeTex = TextureManager::getTexture("bake_tree.png");
 
 	float xTreeOffset = 0.0f;
 	float zTreeOffset = 0.0f;
 
-	for (int i = 0; i < 7; i++) {
+	/*for (int i = 0; i < 7; i++) {
 		TransformationComposite* jjj = new TransformationComposite();
 		xTreeOffset = -4.0 + (float)(rand()) / RAND_MAX * (4.0 - (-4.0));
 		zTreeOffset = -4.0 + (float)(rand()) / RAND_MAX * (4.0 - (-4.0));
 		jjj->add(new Scale(glm::vec3(1.5f)));
 		jjj->add(new Translation(glm::vec3(xTreeOffset, 0.0, zTreeOffset)));
 		this->addObject(new DrawableObject(sp, tree, jjj, treeTex));
-	}
+	}*/
 
-	/*Model* fiona = ModelManger::getModel("fiona.obj");
-	Texture* ggg = TextureManager::getTexture("fiona.png");
-	TransformationComposite* jjj = new TransformationComposite();
+	//Model* fiona = ModelManger::getModel("fiona.obj");
+	//Texture* ggg = TextureManager::getTexture("fiona.png");
+	//TransformationComposite* jjj = new TransformationComposite();
+	//jjj->add(new Rotation(180.0, glm::vec3(0.0, 1.0, 0.0)));
+	//jjj->add(new Scale(glm::vec3(0.5)));
 	//jjj->add(new BezierSimple(
-	//	glm::vec3(-3.35, 0.00, -1.19),
-	//	glm::vec3(-2.50, 0.14, -3.27),
-	//	glm::vec3(-0.37, 0.17, -4.19),
-	//	glm::vec3(0.72, -0.00, -2.10),
+	//	glm::vec3(-2.77, 0.00, 0.08),
+	//	glm::vec3(-3.05, 0.00, -1.79),
+	//	glm::vec3(-1.17, 0.00, -2.93),
+	//	glm::vec3(0.31, 0.00, -2.01),
 	//	0.1f));
 
-	vector<glm::vec3> points = {
-		glm::vec3(-4.37, 0.11, 0.45), glm::vec3(-3.92,  0.06, -1.40), glm::vec3(-1.65, -0.00, -1.64), glm::vec3(-0.97, -0.00, 0.34), //S1
-		glm::vec3(0.68, -0.00, 2.93), glm::vec3(2.11, -0.00, 3.07), glm::vec3(2.81, 0.04, 1.02) //S2
-	};*/
-
-
+	//vector<glm::vec3> points = {
+	//	glm::vec3(-4.37, 0.11, 0.45), glm::vec3(-3.92,  0.06, -1.40), glm::vec3(-1.65, -0.00, -1.64), glm::vec3(-0.97, -0.00, 0.34), //S1
+	//	glm::vec3(0.68, -0.00, 2.93), glm::vec3(2.11, -0.00, 3.07), glm::vec3(2.81, 0.04, 1.02) //S2
+	//};
 	//jjj->add(new BezierSpline(points, 0.5f));
+
 	//this->objects.push_back(new DrawableObject(sp, fiona, jjj, ggg));
 }
 
@@ -596,6 +597,8 @@ void Scene::draw() {
 
 	if (this->bezierPointsComplete) { //all bezier points were selected
 		this->bezierFollowerObject->transformation = new TransformationComposite();
+		this->bezierFollowerObject->transformation->add(new Scale(vec3(0.01f)));
+		this->bezierFollowerObject->transformation->add(new Rotation(90.0f, vec3(0.0, 1.0, 0.0)));
 		this->bezierFollowerObject->transformation->add(new BezierSpline(this->bezierPoints, 0.5f));
 		this->objects.push_back(this->bezierFollowerObject);
 		this->bezierPoints.clear();
@@ -621,7 +624,7 @@ void Scene::setInactiveDrawObj(int id) {
 		int objId = o->getID();
 		if (objId == id) {
 			string name = o->getModelName();
-			if (name != "plain" && name != "skydome" && name != "teren") {
+			if (name != "plain" && name != "skydome" && name != "teren" && name != "tree") {
 				//o->visible = false;
 				this->objects.erase(remove(this->objects.begin(), this->objects.end(), o), this->objects.end());// removing by the object
 				//printf("removing object: %s\n", o->model->modelName.c_str());

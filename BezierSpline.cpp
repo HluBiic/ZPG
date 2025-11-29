@@ -51,5 +51,32 @@ glm::mat4 BezierSpline::apply() {
     glm::vec3 p = parameters * A * glm::transpose(B);
     M = glm::translate(M, p);
 
-	return M;
+
+    //tangent - "tecny" vector
+    glm::vec4 parametersDeriv = glm::vec4(
+        3 * localT * localT,
+        2 * localT,
+        1.0f,
+        0.0f
+    );
+    glm::vec3 tangent = glm::normalize(parametersDeriv * derivA * glm::transpose(B));
+
+    if (reverse) {
+        tangent = -tangent;
+    }
+
+    glm::vec3 forward = tangent;
+    glm::vec3 worldUp = glm::vec3(0, 1, 0);
+
+    glm::vec3 right = glm::normalize(glm::cross(worldUp, forward));
+    glm::vec3 up = glm::cross(forward, right);
+
+    glm::mat4 rotation = glm::mat4(1.0f);
+    rotation[0] = glm::vec4(right, 0.0f);
+    rotation[1] = glm::vec4(up, 0.0f);
+    rotation[2] = glm::vec4(forward, 0.0f);
+
+    M = glm::translate(glm::mat4(1.0f), p);
+
+    return M * rotation;
 }

@@ -18,8 +18,10 @@ void Material::setUniforms(ShaderProgram* sp, const char* name) {
 	string ambient = string(name) + ".ambient";
 	string diffuse = string(name) + ".diffuse";
 	string specular = string(name) + ".specular";
+	string shininess = string(name) + ".shininess";
 
 	sp->setUniform(ambient.c_str(), this->ambient);
 	sp->setUniform(diffuse.c_str(), this->diffuse);
+	sp->setUniform(specular.c_str(), this->specular);
 	sp->setUniform(specular.c_str(), this->specular);
 }

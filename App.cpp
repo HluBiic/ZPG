@@ -187,7 +187,6 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
 					app->scenes.at(app->currentScene).flashlight->flashlightEnabled = 1;
 				}
 				break;
-
 		}
 	}
 }

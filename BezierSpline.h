@@ -20,6 +20,13 @@ private:
 		glm::vec4(1, 0, 0, 0)
 	);
 
+	glm::mat4 derivA = glm::mat4(
+		glm::vec4(-3.0, 9.0, -9.0, 3.0),
+		glm::vec4(6.0, -12.0, 6.0, 0.0),
+		glm::vec4(-3.0, 3.0, 0.0, 0.0),
+		glm::vec4(0.0, 0.0, 0.0, 0.0)
+	);
+
 	glm::mat4x3 B;
 
 	float lastChangeTime = 0.0f;

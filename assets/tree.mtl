@@ -7,9 +7,9 @@ Ka 1.000000 1.000000 1.000000
 Ks 0.000000 0.000000 0.000000
 Ke 0.000000 0.000000 0.000000
 Ni 1.500000
-d 1.000000
 illum 1
 map_Kd tree/textures/DL2X2_0355.png
+map_d tree/textures/DL2X2_0355.png
 
 newmtl Trank_bark
 Ns 0.000000
@@ -17,6 +17,6 @@ Ka 1.000000 1.000000 1.000000
 Ks 0.000000 0.000000 0.000000
 Ke 0.000000 0.000000 0.000000
 Ni 1.500000
-d 1.000000
 illum 1
 map_Kd tree/textures/177.jpg
+map_d tree/textures/177.jpg
