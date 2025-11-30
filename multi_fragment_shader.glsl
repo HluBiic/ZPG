@@ -9,7 +9,7 @@ struct Light {
 	vec4 position; vec3 lightDir;
 	vec4 ambientColor; vec4 diffuseColor; vec4 specularColor;
 	float attenConst; float attenLinear; float attenQuadric;
-	float cutOff;//spotlight border
+	float cutOff;
 	int toggled; //F toggle on/off...1 ON...0 OFF
 };
 
@@ -76,12 +76,12 @@ vec4 calculateSpecular(vec3 camPos, vec4 worldPos, vec3 vectorL, vec3 vectorN, f
 	
 	float cosVal = 0.0;
 	cosVal = max(dot(vectorL, vectorN), 0.0);
-	if (cosVal > 0.0) { //the "holo" effect
+	//if (cosVal > 0.0) { //the "holo" effect
 		if (useMaterial == 1) { //wih material
 			return lightSpecCol * vec4(material.specular, 1.0) * spec;
 		}
 		return lightSpecCol * spec;
-	}
+	//}
 	return vec4(0.0);
 }
 
@@ -110,12 +110,12 @@ void main () {
 
 
 		if (lights[index].type == 0) { //POINT LIGHT
-			vec3 lightPos = lights[index].position.xyz / lights[index].position.w; //careful 0 division may occur !!
+			vec3 lightPos = lights[index].position.xyz / lights[index].position.w;
 			lightDir = normalize(lightPos - (worldPosition.xyz / worldPosition.w)); //vector from surface point to the light source
 			//normalize(lightPosition - worldPosition.xyz) - is wrond...we have to divide the .xyz with .w and not just throw it away!!
 
 			//light attenuation
-			float dist = length(lightPos - (worldPosition.xyz / worldPosition.w)); //dist. from light to fragment poitn
+			float dist = length(lightPos - (worldPosition.xyz / worldPosition.w)); //dist. between light and surface
 			att = attenuation(dist, lights[index].attenConst, lights[index].attenLinear, lights[index].attenQuadric);
 
 
@@ -135,18 +135,13 @@ void main () {
 			att = attenuation(dist, lights[index].attenConst, lights[index].attenLinear, lights[index].attenQuadric);
 
 			//spotlight cone
-			float theta = dot(fragToLight, normalize(-lights[index].lightDir));
+			float theta = dot(fragToLight, normalize(-lights[index].lightDir)); //dot(u, v);
 
 			float intensity;
 			if (lights[index].toggled == 1) {
-				//CONE VERSION 1: hard border of the cone...only inside of the cone is lit..else is turned off
-				//if (theta < lights[index].cutOff) {
-				//	att = 0.0;
-				//}
-
-				//CONE VERSION 2: smooth border of the cone
 				float outerCutOff = lights[index].cutOff;
-				float innerCutOff = outerCutOff + 0.1;
+				float innerOuterWidth = 0.01; //0.01 default...0.005 more narrow...0.00 no smooth brder
+				float innerCutOff = outerCutOff + innerOuterWidth;
 				innerCutOff = clamp(innerCutOff, outerCutOff, 1.0);
 
 				float epsilon = innerCutOff - outerCutOff;

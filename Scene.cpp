@@ -561,14 +561,14 @@ void Scene::whacAMole() {
 	float xTreeOffset = 0.0f;
 	float zTreeOffset = 0.0f;
 
-	/*for (int i = 0; i < 7; i++) {
+	for (int i = 0; i < 7; i++) {
 		TransformationComposite* jjj = new TransformationComposite();
 		xTreeOffset = -4.0 + (float)(rand()) / RAND_MAX * (4.0 - (-4.0));
 		zTreeOffset = -4.0 + (float)(rand()) / RAND_MAX * (4.0 - (-4.0));
 		jjj->add(new Scale(glm::vec3(1.5f)));
 		jjj->add(new Translation(glm::vec3(xTreeOffset, 0.0, zTreeOffset)));
 		this->addObject(new DrawableObject(sp, tree, jjj, treeTex));
-	}*/
+	}
 
 	//Model* fiona = ModelManger::getModel("fiona.obj");
 	//Texture* ggg = TextureManager::getTexture("fiona.png");
@@ -763,7 +763,7 @@ void Scene::cropBezierPoints() {
 void Scene::drawSkybox() {
 	glDepthFunc(GL_LEQUAL);
 
-	//this->skybox->draw();
+	this->skybox->draw();
 
 	glDepthFunc(GL_LESS);
 }
