@@ -78,7 +78,7 @@ void ShaderProgram::setUniform(const glm::mat4& matrix) {
     setUniform("modelMatrix", matrix);
 }
 
-void ShaderProgram::setUniform(const char* name, const glm::vec3& camPosVector) { //for phong lighting 
+void ShaderProgram::setUniform(const char* name, const glm::vec3& camPosVector) {
     this->useShaderProgram();
     GLint idModelTransform = glGetUniformLocation(this->id, name);
     if (idModelTransform == -1) {
@@ -105,7 +105,7 @@ void ShaderProgram::setUniform(const char* name, int value) {
         //printf("%s not found!\n", name);
         //exit(1);
     }
-    glUniform1i(idModelTransform, value); //for passing a single int
+    glUniform1i(idModelTransform, value);
 }
 
 void ShaderProgram::setUniform(const char* name, float value) {
@@ -115,7 +115,7 @@ void ShaderProgram::setUniform(const char* name, float value) {
         //printf("%s not found!\n", name);
         //exit(1);
     }
-    glUniform1f(idModelTransform, value); //for passing a float
+    glUniform1f(idModelTransform, value);
 }
 
 void ShaderProgram::update(ObserverSubject* s) {

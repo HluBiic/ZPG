@@ -9,6 +9,3 @@ public:
 	static Model* getModel(const char* name);
 	static void clear();
 };
-
-//all static so we could call class methods and not have an instance
-

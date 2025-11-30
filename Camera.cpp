@@ -85,7 +85,7 @@ void Camera::move(int key) {
 	case GLFW_KEY_A:
 		this->eye -= glm::normalize(glm::cross(this->target, this->up)) * this->cameraSpeed;
 		break;
-	case GLFW_KEY_D:
+	case GLFW_KEY_D: //Lecture 04 page 11
 		this->eye += glm::normalize(glm::cross(this->target, this->up)) * this->cameraSpeed;
 		break;
 	}

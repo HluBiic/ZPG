@@ -1,5 +1,5 @@
 #version 330
-uniform mat4 modelMatrix; // Usually identity or a scaling matrix for the skybox
+uniform mat4 modelMatrix;
 uniform mat4 projectMatrix;
 uniform mat4 viewMatrix;
 

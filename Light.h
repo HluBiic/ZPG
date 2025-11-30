@@ -17,19 +17,19 @@ class Light : public ObserverSubject {
 private:
 
 public:
-	glm::vec3 lightPosition = glm::vec3(0.0); //point
+	glm::vec3 lightPosition = glm::vec3(0.0);
 	glm::vec4 ambientColor = glm::vec4(0.0);
-	glm::vec4 diffuseColor = glm::vec4(0.0); //point
-	glm::vec4 specularColor = glm::vec4(0.0); //point
-	glm::vec3 lightDirecton = glm::vec4(0.0); //directional light, spotlihgh
+	glm::vec4 diffuseColor = glm::vec4(0.0);
+	glm::vec4 specularColor = glm::vec4(0.0);
+	glm::vec3 lightDirecton = glm::vec4(0.0);
 	
 	float cutOff = 0.0f;
 	//float innerCutOff = 0.0f;...moved directlry into shader
 
 	//for light attenuation
-	float attenConst = 0.0f; //point
-	float attenLinear = 0.0f; //point
-	float attenQuadric = 0.0f; //point
+	float attenConst = 0.0f;
+	float attenLinear = 0.0f;
+	float attenQuadric = 0.0f;
 
 	int type = LightType::POINT; //default point light
 

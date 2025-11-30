@@ -5,7 +5,6 @@
 
 using namespace std;
 
-//https://registry.khronos.org/OpenGL-Refpages/gl4/html/glCreateShader.xhtml
 class Shader {
 private:
 	GLuint shaderID;

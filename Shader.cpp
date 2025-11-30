@@ -5,16 +5,12 @@ Shader::Shader() {
 }
 
 void Shader::createShader(GLenum shaderType, const char* shaderCode) {
-	// Creates an empty shader
 	shaderID = glCreateShader(shaderType);
-	// Sets the source code of the shader.
 	glShaderSource(shaderID, 1, &shaderCode, NULL);
-	// Compiles the shader source code
 	glCompileShader(shaderID);
 }
 
 void Shader::createShaderFromFile(GLenum shaderType, const char* shaderFile) {
-	//Loading the contents of a file into a variable
 	ifstream file(shaderFile);
 	if (!file.is_open())
 	{
@@ -26,6 +22,5 @@ void Shader::createShaderFromFile(GLenum shaderType, const char* shaderFile) {
 }
 
 void Shader::attachShader(GLuint idShaderProgram) {
-	//Attaches the shader to the shaderProgram
 	glAttachShader(idShaderProgram, shaderID);
 }

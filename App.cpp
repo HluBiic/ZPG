@@ -137,7 +137,6 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
 		switch (key) {
 			case GLFW_KEY_KP_1:
 				app->currentScene = 0;
-				//app->scenes.at(app->currentScene).camera->setViewportSize(window, height);//cam will notify all shader programs about resizing
 				break;
 			case GLFW_KEY_KP_2:
 				app->currentScene = 1;

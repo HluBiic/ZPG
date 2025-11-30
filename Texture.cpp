@@ -10,7 +10,7 @@ Texture::Texture(const char* filename) {
 	stbi_set_flip_vertically_on_load(true);
 	this->type = GL_TEXTURE_2D;
 
-	//last argument -> desired number of color channels to be loaded
+	//last argument is the desired number of color channels to be loaded
 	this->textureData = stbi_load(fullPath.c_str(), &this->textureWidth, &this->textureHeight, &this->channels, 4);
 
 	if (!this->textureData) {
@@ -24,10 +24,10 @@ Texture::Texture(const char* filename) {
 	glTexImage2D(this->type, 0, GL_RGBA, this->textureWidth, this->textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, this->textureData);
 	glGenerateMipmap(this->type);
 
-	glTexParameteri(this->type, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(this->type, GL_TEXTURE_WRAP_S, GL_REPEAT); //mipmaps...texture repeating
 	glTexParameteri(this->type, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(this->type, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(this->type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(this->type, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); //2x interpolated
+	glTexParameteri(this->type, GL_TEXTURE_MAG_FILTER, GL_LINEAR); //GL_LINEAR=blur effect
 
 
 	stbi_image_free(this->textureData);//texture done...dont need the image anymore

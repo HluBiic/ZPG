@@ -50,14 +50,14 @@ Model::Model(const char* name) {
 
     vector<float> vertices;
 
-    for (const auto& shape : shapes) { //each vert -> 3x pos, 3x norm + 2xUV
+    for (const auto& shape : shapes) { //each vert = 3x pos, 3x norm + 2xUV
         for (const auto& index : shape.mesh.indices) {
-            // Position  
+            //pos  
             vertices.push_back(attrib.vertices[3 * index.vertex_index + 0]);
             vertices.push_back(attrib.vertices[3 * index.vertex_index + 1]);
             vertices.push_back(attrib.vertices[3 * index.vertex_index + 2]);
 
-            // Normals (if exist)  
+            //normal 
             if (index.normal_index >= 0) {
                 vertices.push_back(attrib.normals[3 * index.normal_index + 0]);
                 vertices.push_back(attrib.normals[3 * index.normal_index + 1]);
@@ -68,7 +68,7 @@ Model::Model(const char* name) {
                 vertices.push_back(0.0f);
             }
 
-            //  UV coordinates (if exist)  
+            //uv for tex. 
             if (index.texcoord_index >= 0) {
                 vertices.push_back(attrib.texcoords[2 * index.texcoord_index + 0]);
                 vertices.push_back(attrib.texcoords[2 * index.texcoord_index + 1]);
@@ -84,17 +84,17 @@ Model::Model(const char* name) {
     glGenBuffers(1, &this->VBO);
     glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
-    this->rawVertCount = (int)vertices.size() / 8; //(pos + normal + uv) -> 8 floats
+    this->rawVertCount = (int)vertices.size() / 8; //(pos + normal + uv) = 8 floats
     //VAO
     glGenVertexArrays(1, &this->VAO);
     glBindVertexArray(this->VAO);
     glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
 
-    glEnableVertexAttribArray(0); //enable vertex attributes...vertex
+    glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(1); //enable vertex attributes...normal
+    glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(2); //enable vertex attributes...uv for textures
+    glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 
 
